@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pioneer Party - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background-color: #2d2d2d;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background-color: #444;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-tab.active {
+            background-color: #10B981;
+        }
+
+        .nav-tab:hover {
+            background-color: #555;
+        }
+
+        .main-content {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #059669;
+        }
+
+        .btn-secondary {
+            background-color: #6B7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4B5563;
+        }
+
+        .btn-danger {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #DC2626;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .orders-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .orders-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .orders-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-received { background-color: #DBEAFE; color: #1E40AF; }
+        .status-paid { background-color: #D1FAE5; color: #065F46; }
+        .status-in_progress { background-color: #FEF3C7; color: #92400E; }
+        .status-ready_for_pickup { background-color: #FEF3C7; color: #92400E; }
+        .status-picked_up { background-color: #F3F4F6; color: #374151; }
+        .status-abandoned { background-color: #F3F4F6; color: #374151; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #10B981;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .settings-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .settings-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .color-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .color-picker input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            background-color: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .alert-error {
+            background-color: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Login Form -->
+        <div id="login-form" class="login-form">
+            <h2>Admin Login</h2>
+            <form id="login">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+            <div id="login-error" class="alert alert-error" style="display: none;"></div>
+        </div>
+
+        <!-- Main App -->
+        <div id="main-app" style="display: none;">
+            <div class="header">
+                <img src="/logo.svg" alt="Pioneer Party" class="logo">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" data-tab="orders">Orders</button>
+                    <button class="nav-tab" data-tab="settings">Settings</button>
+                    <button class="nav-tab" data-tab="export">Export</button>
+                    <button class="nav-tab" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <!-- Orders Tab -->
+                <div id="orders-tab" class="tab-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-orders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="active-orders">0</div>
+                            <div class="stat-label">Active Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="ready-orders">0</div>
+                            <div class="stat-label">Ready for Pickup</div>
+                        </div>
+                    </div>
+
+                    <div class="search-bar">
+                        <input type="text" id="search-orders" placeholder="Search orders by number, name, or phone...">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="openOrderModal()">Add New Order</button>
+                    </div>
+
+                    <div id="orders-container">
+                        <div class="loading">Loading orders...</div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-content">
+                    <div class="settings-grid">
+                        <div class="settings-section">
+                            <h3>Display Settings</h3>
+                            <div class="form-group">
+                                <label for="display-mode">Display Mode:</label>
+                                <select id="display-mode" class="form-control">
+                                    <option value="dark">Dark Mode</option>
+                                    <option value="light">Light Mode</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="rotation-seconds">Page Rotation (seconds):</label>
+                                <input type="number" id="rotation-seconds" min="5" max="60" value="10">
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Status Colors</h3>
+                            <div class="color-picker">
+                                <label>Received:</label>
+                                <input type="color" id="color-received" value="#3B82F6">
+                            </div>
+                            <div class="color-picker">
+                                <label>Paid:</label>
+                                <input type="color" id="color-paid" value="#10B981">
+                            </div>
+                            <div class="color-picker">
+                                <label>In Progress:</label>
+                                <input type="color" id="color-in_progress" value="#F59E0B">
+                            </div>
+                            <div class="color-picker">
+                                <label>Ready for Pickup:</label>
+                                <input type="color" id="color-ready_for_pickup" value="#FCD34D">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </div>
+
+                <!-- Export Tab -->
+                <div id="export-tab" class="tab-content">
+                    <div class="settings-section">
+                        <h3>Export Orders</h3>
+                        <p>Export all orders to a CSV file for backup or analysis.</p>
+                        <button class="btn btn-primary" onclick="exportOrders()">Export to CSV</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Modal -->
+        <div id="order-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">Add New Order</h2>
+                    <span class="close" onclick="closeOrderModal()">&times;</span>
+                </div>
+                <form id="order-form">
+                    <input type="hidden" id="order-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-first-name">First Name:</label>
+                            <input type="text" id="customer-first-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-last-name">Last Name:</label>
+                            <input type="text" id="customer-last-name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-phone">Phone:</label>
+                            <input type="tel" id="customer-phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-email">Email:</label>
+                            <input type="email" id="customer-email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customer-address">Address:</label>
+                        <input type="text" id="customer-address" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pickup-date">Pickup Date:</label>
+                            <input type="date" id="pickup-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pickup-time">Pickup Time:</label>
+                            <input type="time" id="pickup-time">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="status">Status:</label>
+                            <select id="status">
+                                <option value="received">Received</option>
+                                <option value="paid">Paid</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="ready_for_pickup">Ready for Pickup</option>
+                                <option value="picked_up">Picked Up</option>
+                                <option value="abandoned">Abandoned</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="copies">Copies:</label>
+                            <input type="number" id="copies" min="1" value="1">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="order-description">Order Description:</label>
+                        <textarea id="order-description" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="special-instructions">Special Instructions:</label>
+                        <textarea id="special-instructions" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Notes:</label>
+                        <textarea id="notes" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeOrderModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        class AdminPanel {
+            constructor() {
+                this.orders = [];
+                this.settings = {};
+                this.currentUser = null;
+                this.socket = null;
+                
+                this.init();
+            }
+
+            init() {
+                this.checkAuth();
+                this.setupEventListeners();
+            }
+
+            checkAuth() {
+                const token = localStorage.getItem('admin_token');
+                if (token) {
+                    this.verifyToken(token);
+                } else {
+                    this.showLogin();
+                }
+            }
+
+            async verifyToken(token) {
+                try {
+                    const response = await fetch('/api/auth/verify', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.currentUser = data.user;
+                        this.showMainApp();
+                        this.loadData();
+                    } else {
+                        this.showLogin();
+                    }
+                } catch (error) {
+                    console.error('Token verification failed:', error);
+                    this.showLogin();
+                }
+            }
+
+            showLogin() {
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('main-app').style.display = 'none';
+            }
+
+            showMainApp() {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                this.setupSocket();
+            }
+
+            setupEventListeners() {
+                // Login form
+                document.getElementById('login').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.login();
+                });
+
+                // Tab navigation
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        this.switchTab(e.target.dataset.tab);
+                    });
+                });
+
+                // Order form
+                document.getElementById('order-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveOrder();
+                });
+
+                // Search
+                document.getElementById('search-orders').addEventListener('input', (e) => {
+                    this.filterOrders(e.target.value);
+                });
+            }
+
+            async login() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        localStorage.setItem('admin_token', data.token);
+                        this.currentUser = data.user;
+                        this.showMainApp();
+                        this.loadData();
+                    } else {
+                        this.showError(data.message);
+                    }
+                } catch (error) {
+                    console.error('Login failed:', error);
+                    this.showError('Login failed. Please try again.');
+                }
+            }
+
+            logout() {
+                localStorage.removeItem('admin_token');
+                this.currentUser = null;
+                this.showLogin();
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('login-error');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
+
+            switchTab(tabName) {
+                // Update active tab
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+                // Update active content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+
+                // Load data for specific tabs
+                if (tabName === 'settings') {
+                    this.loadSettings();
+                }
+            }
+
+            async loadData() {
+                await Promise.all([
+                    this.loadOrders(),
+                    this.loadSettings()
+                ]);
+            }
+
+            async loadOrders() {
+                try {
+                    const response = await fetch('/api/orders');
+                    if (response.ok) {
+                        this.orders = await response.json();
+                        this.displayOrders();
+                        this.updateStats();
+                    }
+                } catch (error) {
+                    console.error('Failed to load orders:', error);
+                }
+            }
+
+            async loadSettings() {
+                try {
+                    const response = await fetch('/api/settings');
+                    if (response.ok) {
+                        this.settings = await response.json();
+                        this.populateSettingsForm();
+                    }
+                } catch (error) {
+                    console.error('Failed to load settings:', error);
+                }
+            }
+
+            displayOrders() {
+                const container = document.getElementById('orders-container');
+                
+                if (this.orders.length === 0) {
+                    container.innerHTML = '<div class="loading">No orders found</div>';
+                    return;
+                }
+
+                const ordersHTML = this.orders.map(order => `
+                    <tr>
+                        <td>#${order.order_number}</td>
+                        <td>${order.customer_first_name} ${order.customer_last_name}</td>
+                        <td>${order.customer_phone}</td>
+                        <td>${order.customer_email}</td>
+                        <td><span class="status-badge status-${order.status}">${order.status.replace('_', ' ')}</span></td>
+                        <td>${order.pickup_date || 'TBD'}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="editOrder(${order.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteOrder(${order.id})">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                container.innerHTML = `
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Pickup Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ordersHTML}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            updateStats() {
+                const totalOrders = this.orders.length;
+                const activeOrders = this.orders.filter(o => !['picked_up', 'abandoned'].includes(o.status)).length;
+                const readyOrders = this.orders.filter(o => o.status === 'ready_for_pickup').length;
+
+                document.getElementById('total-orders').textContent = totalOrders;
+                document.getElementById('active-orders').textContent = activeOrders;
+                document.getElementById('ready-orders').textContent = readyOrders;
+            }
+
+            filterOrders(searchTerm) {
+                const filtered = this.orders.filter(order => 
+                    order.order_number.toString().includes(searchTerm) ||
+                    order.customer_first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    order.customer_last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    order.customer_phone.includes(searchTerm)
+                );
+
+                // Update display with filtered results
+                const container = document.getElementById('orders-container');
+                if (filtered.length === 0) {
+                    container.innerHTML = '<div class="loading">No orders match your search</div>';
+                    return;
+                }
+
+                const ordersHTML = filtered.map(order => `
+                    <tr>
+                        <td>#${order.order_number}</td>
+                        <td>${order.customer_first_name} ${order.customer_last_name}</td>
+                        <td>${order.customer_phone}</td>
+                        <td>${order.customer_email}</td>
+                        <td><span class="status-badge status-${order.status}">${order.status.replace('_', ' ')}</span></td>
+                        <td>${order.pickup_date || 'TBD'}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="editOrder(${order.id})">Edit</button>
+                            <button class="btn btn-danger" onclick="deleteOrder(${order.id})">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                container.innerHTML = `
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Pickup Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${ordersHTML}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            populateSettingsForm() {
+                document.getElementById('display-mode').value = this.settings.display_mode || 'dark';
+                document.getElementById('rotation-seconds').value = this.settings.page_rotation_seconds || 10;
+                
+                if (this.settings.status_colors) {
+                    document.getElementById('color-received').value = this.settings.status_colors.received || '#3B82F6';
+                    document.getElementById('color-paid').value = this.settings.status_colors.paid || '#10B981';
+                    document.getElementById('color-in_progress').value = this.settings.status_colors.in_progress || '#F59E0B';
+                    document.getElementById('color-ready_for_pickup').value = this.settings.status_colors.ready_for_pickup || '#FCD34D';
+                }
+            }
+
+            async saveSettings() {
+                const settings = {
+                    display_mode: document.getElementById('display-mode').value,
+                    page_rotation_seconds: parseInt(document.getElementById('rotation-seconds').value),
+                    status_colors: {
+                        received: document.getElementById('color-received').value,
+                        paid: document.getElementById('color-paid').value,
+                        in_progress: document.getElementById('color-in_progress').value,
+                        ready_for_pickup: document.getElementById('color-ready_for_pickup').value
+                    }
+                };
+
+                try {
+                    const token = localStorage.getItem('admin_token');
+                    const response = await fetch('/api/settings', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(settings)
+                    });
+
+                    if (response.ok) {
+                        this.showAlert('Settings saved successfully!', 'success');
+                    } else {
+                        this.showAlert('Failed to save settings', 'error');
+                    }
+                } catch (error) {
+                    console.error('Failed to save settings:', error);
+                    this.showAlert('Failed to save settings', 'error');
+                }
+            }
+
+            async exportOrders() {
+                try {
+                    const token = localStorage.getItem('admin_token');
+                    const response = await fetch('/api/orders/export/csv', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `orders-${new Date().toISOString().split('T')[0]}.csv`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                        this.showAlert('Orders exported successfully!', 'success');
+                    } else {
+                        this.showAlert('Failed to export orders', 'error');
+                    }
+                } catch (error) {
+                    console.error('Failed to export orders:', error);
+                    this.showAlert('Failed to export orders', 'error');
+                }
+            }
+
+            setupSocket() {
+                this.socket = io();
+                
+                this.socket.on('order_created', () => {
+                    this.loadOrders();
+                });
+
+                this.socket.on('order_updated', () => {
+                    this.loadOrders();
+                });
+
+                this.socket.on('order_deleted', () => {
+                    this.loadOrders();
+                });
+            }
+
+            showAlert(message, type) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.textContent = message;
+                
+                const mainContent = document.querySelector('.main-content');
+                mainContent.insertBefore(alertDiv, mainContent.firstChild);
+                
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 5000);
+            }
+        }
+
+        // Global functions for order management
+        function openOrderModal(orderId = null) {
+            const modal = document.getElementById('order-modal');
+            const title = document.getElementById('modal-title');
+            const form = document.getElementById('order-form');
+            
+            if (orderId) {
+                title.textContent = 'Edit Order';
+                // Load order data
+                const order = adminPanel.orders.find(o => o.id === orderId);
+                if (order) {
+                    document.getElementById('order-id').value = order.id;
+                    document.getElementById('customer-first-name').value = order.customer_first_name;
+                    document.getElementById('customer-last-name').value = order.customer_last_name;
+                    document.getElementById('customer-phone').value = order.customer_phone;
+                    document.getElementById('customer-email').value = order.customer_email;
+                    document.getElementById('customer-address').value = order.customer_address;
+                    document.getElementById('pickup-date').value = order.pickup_date || '';
+                    document.getElementById('pickup-time').value = order.pickup_time || '';
+                    document.getElementById('status').value = order.status;
+                    document.getElementById('copies').value = order.copies || 1;
+                    document.getElementById('order-description').value = order.order_description || '';
+                    document.getElementById('special-instructions').value = order.special_instructions || '';
+                    document.getElementById('notes').value = order.notes || '';
+                }
+            } else {
+                title.textContent = 'Add New Order';
+                form.reset();
+                document.getElementById('order-id').value = '';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal').style.display = 'none';
+        }
+
+        function editOrder(orderId) {
+            openOrderModal(orderId);
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm('Are you sure you want to delete this order?')) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('admin_token');
+                const response = await fetch(`/api/orders/${orderId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    adminPanel.loadOrders();
+                    adminPanel.showAlert('Order deleted successfully!', 'success');
+                } else {
+                    adminPanel.showAlert('Failed to delete order', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to delete order:', error);
+                adminPanel.showAlert('Failed to delete order', 'error');
+            }
+        }
+
+        function logout() {
+            adminPanel.logout();
+        }
+
+        function saveSettings() {
+            adminPanel.saveSettings();
+        }
+
+        function exportOrders() {
+            adminPanel.exportOrders();
+        }
+
+        // Initialize the admin panel
+        let adminPanel;
+        document.addEventListener('DOMContentLoaded', () => {
+            adminPanel = new AdminPanel();
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('order-modal');
+            if (event.target === modal) {
+                closeOrderModal();
+            }
+        }
+    </script>
+</body>
+</html>

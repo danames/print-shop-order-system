@@ -1,0 +1,6 @@
+<svg width="300" height="80" viewBox="0 0 300 80" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="80" fill="#1a1a1a"/>
+  <text x="150" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#ffffff" stroke="#ffffff" stroke-width="0.5">PIONEER PARTY</text>
+  <line x1="50" y1="45" x2="250" y2="45" stroke="#1E40AF" stroke-width="2"/>
+  <text x="150" y="60" font-family="Arial, sans-serif" font-size="14" text-anchor="middle" fill="#1E40AF">GIFT &amp; COPY</text>
+</svg>
