@@ -326,6 +326,169 @@
             color: #666;
         }
 
+        /* Advanced Filter Styles */
+        .filter-panel {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-header h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .filter-content {
+            padding: 20px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .filter-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .filter-section h4 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .status-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .checkbox-label:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .quick-filters {
+            margin-bottom: 20px;
+        }
+
+        .quick-filters h4 {
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+
+        .quick-filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .quick-filter-buttons .btn {
+            font-size: 14px;
+            padding: 8px 16px;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .active-filters {
+            padding: 15px 20px;
+            background-color: #e3f2fd;
+            border-top: 1px solid #bbdefb;
+        }
+
+        .active-filters h4 {
+            margin: 0 0 10px 0;
+            color: #1976d2;
+            font-size: 14px;
+        }
+
+        .filter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-chip {
+            background-color: #1976d2;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-chip .remove {
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        .filter-chip .remove:hover {
+            opacity: 1;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .header {
@@ -354,6 +517,94 @@
                 width: 95%;
                 padding: 20px;
             }
+        }
+
+        /* Inline editing styles */
+        .clickable-status {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clickable-status:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .clickable-date {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .clickable-date:hover {
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .status-dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 150px;
+            padding: 8px 0;
+        }
+
+        .status-option {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .status-option .status-badge {
+            margin: 0;
+            font-size: 11px;
+        }
+
+        .date-picker-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .date-picker-modal {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .date-picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .date-picker-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -406,8 +657,144 @@
                         </div>
                     </div>
 
+                    <!-- Advanced Filter Panel -->
+                    <div class="filter-panel">
+                        <div class="filter-header">
+                            <h3>Advanced Filters</h3>
+                            <button class="btn btn-secondary" onclick="toggleFilterPanel()" id="filter-toggle">
+                                <span id="filter-toggle-text">Show Filters</span>
+                            </button>
+                        </div>
+                        
+                        <div class="filter-content" id="filter-content" style="display: none;">
+                            <div class="filter-grid">
+                                <!-- Date Range Filters -->
+                                <div class="filter-section">
+                                    <h4>Date Range</h4>
+                                    <div class="filter-row">
+                                        <div class="filter-group">
+                                            <label>Created Date From:</label>
+                                            <input type="date" id="filter-created-from">
+                                        </div>
+                                        <div class="filter-group">
+                                            <label>Created Date To:</label>
+                                            <input type="date" id="filter-created-to">
+                                        </div>
+                                    </div>
+                                    <div class="filter-row">
+                                        <div class="filter-group">
+                                            <label>Pickup Date From:</label>
+                                            <input type="date" id="filter-pickup-from">
+                                        </div>
+                                        <div class="filter-group">
+                                            <label>Pickup Date To:</label>
+                                            <input type="date" id="filter-pickup-to">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Status Filters -->
+                                <div class="filter-section">
+                                    <h4>Status</h4>
+                                    <div class="status-filters">
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="status-received" value="received">
+                                            <span class="status-badge status-received">Received</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="status-paid" value="paid">
+                                            <span class="status-badge status-paid">Paid</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="status-in_progress" value="in_progress">
+                                            <span class="status-badge status-in_progress">In Progress</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="status-ready_for_pickup" value="ready_for_pickup">
+                                            <span class="status-badge status-ready_for_pickup">Ready for Pickup</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="status-picked_up" value="picked_up">
+                                            <span class="status-badge status-picked_up">Picked Up</span>
+                                        </label>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="status-abandoned" value="abandoned">
+                                            <span class="status-badge status-abandoned">Abandoned</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Customer Filters -->
+                                <div class="filter-section">
+                                    <h4>Customer</h4>
+                                    <div class="filter-row">
+                                        <div class="filter-group">
+                                            <label>Customer Name:</label>
+                                            <input type="text" id="filter-customer-name" placeholder="Search by name...">
+                                        </div>
+                                        <div class="filter-group">
+                                            <label>Phone:</label>
+                                            <input type="text" id="filter-phone" placeholder="Search by phone...">
+                                        </div>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>Email:</label>
+                                        <input type="text" id="filter-email" placeholder="Search by email...">
+                                    </div>
+                                </div>
+
+                                <!-- Order Details -->
+                                <div class="filter-section">
+                                    <h4>Order Details</h4>
+                                    <div class="filter-row">
+                                        <div class="filter-group">
+                                            <label>Order Number From:</label>
+                                            <input type="number" id="filter-order-from" placeholder="e.g., 1000">
+                                        </div>
+                                        <div class="filter-group">
+                                            <label>Order Number To:</label>
+                                            <input type="number" id="filter-order-to" placeholder="e.g., 2000">
+                                        </div>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>Description/Notes:</label>
+                                        <input type="text" id="filter-description" placeholder="Search in description or notes...">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Filters -->
+                            <div class="quick-filters">
+                                <h4>Quick Filters</h4>
+                                <div class="quick-filter-buttons">
+                                    <button class="btn btn-secondary" onclick="applyQuickFilter('active')">Active Orders</button>
+                                    <button class="btn btn-secondary" onclick="applyQuickFilter('today')">Today's Orders</button>
+                                    <button class="btn btn-secondary" onclick="applyQuickFilter('thisWeek')">This Week</button>
+                                    <button class="btn btn-secondary" onclick="applyQuickFilter('thisMonth')">This Month</button>
+                                    <button class="btn btn-secondary" onclick="applyQuickFilter('ready')">Ready for Pickup</button>
+                                    <button class="btn btn-secondary" onclick="applyQuickFilter('overdue')">Overdue</button>
+                                    <button class="btn btn-secondary" onclick="applyQuickFilter('abandoned')">Abandoned</button>
+                                </div>
+                            </div>
+
+                            <!-- Filter Actions -->
+                            <div class="filter-actions">
+                                <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                                <button class="btn btn-secondary" onclick="clearAllFilters()">Clear All</button>
+                                <button class="btn btn-secondary" onclick="saveFilterPreset()">Save Preset</button>
+                            </div>
+                        </div>
+
+                        <!-- Active Filters Display -->
+                        <div class="active-filters" id="active-filters" style="display: none;">
+                            <h4>Active Filters:</h4>
+                            <div class="filter-chips" id="filter-chips"></div>
+                        </div>
+                    </div>
+
+                    <!-- Simple Search Bar (kept for backward compatibility) -->
                     <div class="search-bar">
-                        <input type="text" id="search-orders" placeholder="Search orders by number, name, or phone...">
+                        <input type="text" id="search-orders" placeholder="Quick search by number, name, or phone...">
                     </div>
 
                     <div style="margin-bottom: 20px;">
@@ -569,9 +956,11 @@
         class AdminPanel {
             constructor() {
                 this.orders = [];
+                this.filteredOrders = [];
                 this.settings = {};
                 this.currentUser = null;
                 this.socket = null;
+                this.activeFilters = {};
                 
                 this.init();
             }
@@ -721,9 +1110,11 @@
 
             async loadOrders() {
                 try {
-                    const response = await fetch('/api/orders');
+                    // Load ALL orders including picked_up and abandoned for admin filtering
+                    const response = await fetch('/api/orders?show_picked_up=true');
                     if (response.ok) {
                         this.orders = await response.json();
+                        this.filteredOrders = [...this.orders];
                         this.displayOrders();
                         this.updateStats();
                     }
@@ -746,20 +1137,33 @@
 
             displayOrders() {
                 const container = document.getElementById('orders-container');
+                // Always use filteredOrders if filters are active, otherwise use all orders
+                const ordersToDisplay = Object.keys(this.activeFilters).length > 0 ? this.filteredOrders : this.orders;
                 
-                if (this.orders.length === 0) {
-                    container.innerHTML = '<div class="loading">No orders found</div>';
+                if (ordersToDisplay.length === 0) {
+                    const message = Object.keys(this.activeFilters).length > 0 ? 
+                        'No orders match your current filters' : 
+                        'No orders found';
+                    container.innerHTML = `<div class="loading">${message}</div>`;
                     return;
                 }
 
-                const ordersHTML = this.orders.map(order => `
+                const ordersHTML = ordersToDisplay.map(order => `
                     <tr>
                         <td>#${order.order_number}</td>
                         <td>${order.customer_first_name} ${order.customer_last_name}</td>
                         <td>${order.customer_phone}</td>
                         <td>${order.customer_email}</td>
-                        <td><span class="status-badge status-${order.status}">${order.status.replace('_', ' ')}</span></td>
-                        <td>${order.pickup_date || 'TBD'}</td>
+                        <td>
+                            <span class="status-badge status-${order.status} clickable-status" 
+                                  onclick="showStatusDropdown(${order.id}, '${order.status}')" 
+                                  title="Click to change status">
+                                ${this.formatStatusText(order.status)}
+                            </span>
+                        </td>
+                        <td class="clickable-date" onclick="showDatePicker(${order.id}, '${order.pickup_date || ''}', '${order.pickup_time || ''}')" title="Click to change pickup date and time">
+                            ${this.formatPickupDateTime(order.pickup_date, order.pickup_time)}
+                        </td>
                         <td>
                             <button class="btn btn-secondary" onclick="editOrder(${order.id})">Edit</button>
                             <button class="btn btn-danger" onclick="deleteOrder(${order.id})">Delete</button>
@@ -776,7 +1180,7 @@
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>Status</th>
-                                <th>Pickup Date</th>
+                                <th>Pickup Date & Time</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -788,9 +1192,10 @@
             }
 
             updateStats() {
-                const totalOrders = this.orders.length;
-                const activeOrders = this.orders.filter(o => !['picked_up', 'abandoned'].includes(o.status)).length;
-                const readyOrders = this.orders.filter(o => o.status === 'ready_for_pickup').length;
+                const ordersToCount = Object.keys(this.activeFilters).length > 0 ? this.filteredOrders : this.orders;
+                const totalOrders = ordersToCount.length;
+                const activeOrders = ordersToCount.filter(o => !['picked_up', 'abandoned'].includes(o.status)).length;
+                const readyOrders = ordersToCount.filter(o => o.status === 'ready_for_pickup').length;
 
                 document.getElementById('total-orders').textContent = totalOrders;
                 document.getElementById('active-orders').textContent = activeOrders;
@@ -798,7 +1203,10 @@
             }
 
             filterOrders(searchTerm) {
-                const filtered = this.orders.filter(order => 
+                // Use the current filtered orders as base, or all orders if no advanced filters
+                const baseOrders = Object.keys(this.activeFilters).length > 0 ? this.filteredOrders : this.orders;
+                
+                const filtered = baseOrders.filter(order => 
                     order.order_number.toString().includes(searchTerm) ||
                     order.customer_first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     order.customer_last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -836,7 +1244,7 @@
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>Status</th>
-                                <th>Pickup Date</th>
+                                <th>Pickup Date & Time</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -919,6 +1327,448 @@
                 } catch (error) {
                     console.error('Failed to export orders:', error);
                     this.showAlert('Failed to export orders', 'error');
+                }
+            }
+
+            async saveOrder() {
+                const orderId = document.getElementById('order-id').value;
+                const isEdit = orderId !== '';
+                
+                const orderData = {
+                    customer_first_name: document.getElementById('customer-first-name').value,
+                    customer_last_name: document.getElementById('customer-last-name').value,
+                    customer_phone: document.getElementById('customer-phone').value,
+                    customer_email: document.getElementById('customer-email').value,
+                    customer_address: document.getElementById('customer-address').value,
+                    pickup_date: document.getElementById('pickup-date').value,
+                    pickup_time: document.getElementById('pickup-time').value,
+                    status: document.getElementById('status').value,
+                    copies: parseInt(document.getElementById('copies').value),
+                    order_description: document.getElementById('order-description').value,
+                    special_instructions: document.getElementById('special-instructions').value,
+                    notes: document.getElementById('notes').value
+                };
+
+                try {
+                    const token = localStorage.getItem('admin_token');
+                    const url = isEdit ? `/api/orders/${orderId}` : '/api/orders';
+                    const method = isEdit ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(orderData)
+                    });
+
+                    if (response.ok) {
+                        this.showAlert(isEdit ? 'Order updated successfully!' : 'Order created successfully!', 'success');
+                        this.closeOrderModal();
+                        this.loadOrders();
+                    } else {
+                        const errorData = await response.json();
+                        this.showAlert(errorData.message || 'Failed to save order', 'error');
+                    }
+                } catch (error) {
+                    console.error('Failed to save order:', error);
+                    this.showAlert('Failed to save order', 'error');
+                }
+            }
+
+            closeOrderModal() {
+                document.getElementById('order-modal').style.display = 'none';
+            }
+
+            // Advanced Filtering Methods
+            applyFilters() {
+                this.activeFilters = this.getFilterValues();
+                this.filteredOrders = this.applyAdvancedFilters(this.orders, this.activeFilters);
+                this.displayOrders();
+                this.updateActiveFiltersDisplay();
+                this.updateStats();
+            }
+
+            getFilterValues() {
+                const filters = {};
+                
+                // Date filters
+                const createdFrom = document.getElementById('filter-created-from').value;
+                const createdTo = document.getElementById('filter-created-to').value;
+                const pickupFrom = document.getElementById('filter-pickup-from').value;
+                const pickupTo = document.getElementById('filter-pickup-to').value;
+                
+                if (createdFrom) filters.createdFrom = createdFrom;
+                if (createdTo) filters.createdTo = createdTo;
+                if (pickupFrom) filters.pickupFrom = pickupFrom;
+                if (pickupTo) filters.pickupTo = pickupTo;
+                
+                // Status filters
+                const statusFilters = [];
+                document.querySelectorAll('.status-filters input[type="checkbox"]:checked').forEach(checkbox => {
+                    statusFilters.push(checkbox.value);
+                });
+                if (statusFilters.length > 0) filters.statuses = statusFilters;
+                
+                // Customer filters
+                const customerName = document.getElementById('filter-customer-name').value.trim();
+                const phone = document.getElementById('filter-phone').value.trim();
+                const email = document.getElementById('filter-email').value.trim();
+                
+                if (customerName) filters.customerName = customerName;
+                if (phone) filters.phone = phone;
+                if (email) filters.email = email;
+                
+                // Order details
+                const orderFrom = document.getElementById('filter-order-from').value;
+                const orderTo = document.getElementById('filter-order-to').value;
+                const description = document.getElementById('filter-description').value.trim();
+                
+                if (orderFrom) filters.orderFrom = parseInt(orderFrom);
+                if (orderTo) filters.orderTo = parseInt(orderTo);
+                if (description) filters.description = description;
+                
+                return filters;
+            }
+
+            applyAdvancedFilters(orders, filters) {
+                return orders.filter(order => {
+                    // Date filters
+                    if (filters.createdFrom && new Date(order.created_at) < new Date(filters.createdFrom)) {
+                        return false;
+                    }
+                    if (filters.createdTo && new Date(order.created_at) > new Date(filters.createdTo + 'T23:59:59')) {
+                        return false;
+                    }
+                    if (filters.pickupFrom && order.pickup_date && new Date(order.pickup_date) < new Date(filters.pickupFrom)) {
+                        return false;
+                    }
+                    if (filters.pickupTo && order.pickup_date && new Date(order.pickup_date) > new Date(filters.pickupTo + 'T23:59:59')) {
+                        return false;
+                    }
+                    
+                    // Status filters
+                    if (filters.statuses && filters.statuses.length > 0 && !filters.statuses.includes(order.status)) {
+                        return false;
+                    }
+                    
+                    // Customer filters
+                    if (filters.customerName) {
+                        const fullName = `${order.customer_first_name} ${order.customer_last_name}`.toLowerCase();
+                        if (!fullName.includes(filters.customerName.toLowerCase())) {
+                            return false;
+                        }
+                    }
+                    if (filters.phone && !order.customer_phone.includes(filters.phone)) {
+                        return false;
+                    }
+                    if (filters.email && !order.customer_email.toLowerCase().includes(filters.email.toLowerCase())) {
+                        return false;
+                    }
+                    
+                    // Order details
+                    if (filters.orderFrom && order.order_number < filters.orderFrom) {
+                        return false;
+                    }
+                    if (filters.orderTo && order.order_number > filters.orderTo) {
+                        return false;
+                    }
+                    if (filters.description) {
+                        const searchText = `${order.order_description || ''} ${order.notes || ''}`.toLowerCase();
+                        if (!searchText.includes(filters.description.toLowerCase())) {
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                });
+            }
+
+            updateActiveFiltersDisplay() {
+                const activeFiltersDiv = document.getElementById('active-filters');
+                const filterChipsDiv = document.getElementById('filter-chips');
+                
+                if (Object.keys(this.activeFilters).length === 0) {
+                    activeFiltersDiv.style.display = 'none';
+                    return;
+                }
+                
+                activeFiltersDiv.style.display = 'block';
+                filterChipsDiv.innerHTML = '';
+                
+                Object.entries(this.activeFilters).forEach(([key, value]) => {
+                    const chip = this.createFilterChip(key, value);
+                    filterChipsDiv.appendChild(chip);
+                });
+            }
+
+            createFilterChip(key, value) {
+                const chip = document.createElement('div');
+                chip.className = 'filter-chip';
+                
+                let displayText = '';
+                switch (key) {
+                    case 'createdFrom':
+                        displayText = `Created from: ${value}`;
+                        break;
+                    case 'createdTo':
+                        displayText = `Created to: ${value}`;
+                        break;
+                    case 'pickupFrom':
+                        displayText = `Pickup from: ${value}`;
+                        break;
+                    case 'pickupTo':
+                        displayText = `Pickup to: ${value}`;
+                        break;
+                    case 'statuses':
+                        // Check if this is the "Active" combination
+                        if (value.length === 4 && 
+                            value.includes('received') && value.includes('paid') && 
+                            value.includes('in_progress') && value.includes('ready_for_pickup')) {
+                            displayText = 'Active';
+                        } else {
+                            // Format individual status values
+                            const formattedStatuses = value.map(status => this.formatStatusText(status));
+                            displayText = `Status: ${formattedStatuses.join(', ')}`;
+                        }
+                        break;
+                    case 'customerName':
+                        displayText = `Customer: ${value}`;
+                        break;
+                    case 'phone':
+                        displayText = `Phone: ${value}`;
+                        break;
+                    case 'email':
+                        displayText = `Email: ${value}`;
+                        break;
+                    case 'orderFrom':
+                        displayText = `Order from: ${value}`;
+                        break;
+                    case 'orderTo':
+                        displayText = `Order to: ${value}`;
+                        break;
+                    case 'description':
+                        displayText = `Description: ${value}`;
+                        break;
+                }
+                
+                chip.innerHTML = `
+                    <span>${displayText}</span>
+                    <span class="remove" onclick="removeFilter('${key}')">&times;</span>
+                `;
+                
+                return chip;
+            }
+
+            formatStatusText(status) {
+                const statusMap = {
+                    'received': 'Received',
+                    'paid': 'Paid', 
+                    'in_progress': 'In Progress',
+                    'ready_for_pickup': 'Ready for Pickup',
+                    'picked_up': 'Picked Up',
+                    'abandoned': 'Abandoned'
+                };
+                return statusMap[status] || status;
+            }
+
+            formatPickupDateTime(date, time) {
+                if (!date) return 'TBD';
+                
+                try {
+                    // Parse the date (assuming YYYY-MM-DD format)
+                    const dateObj = new Date(date + 'T00:00:00');
+                    
+                    // Format date as M/D/YY
+                    const month = dateObj.getMonth() + 1;
+                    const day = dateObj.getDate();
+                    const year = dateObj.getFullYear().toString().slice(-2);
+                    const formattedDate = `${month}/${day}/${year}`;
+                    
+                    if (!time) {
+                        return formattedDate;
+                    }
+                    
+                    // Parse and format time (assuming HH:MM format)
+                    const [hours, minutes] = time.split(':');
+                    const hour24 = parseInt(hours);
+                    const minute = parseInt(minutes);
+                    
+                    // Convert to 12-hour format
+                    let hour12 = hour24;
+                    let ampm = 'AM';
+                    
+                    if (hour24 === 0) {
+                        hour12 = 12;
+                    } else if (hour24 === 12) {
+                        ampm = 'PM';
+                    } else if (hour24 > 12) {
+                        hour12 = hour24 - 12;
+                        ampm = 'PM';
+                    }
+                    
+                    const formattedTime = `${hour12}:${minute.toString().padStart(2, '0')} ${ampm}`;
+                    
+                    return `${formattedDate} ${formattedTime}`;
+                } catch (error) {
+                    console.error('Error formatting date/time:', error);
+                    return date || 'TBD';
+                }
+            }
+
+            clearAllFilters() {
+                // Clear all filter inputs
+                document.querySelectorAll('.filter-panel input').forEach(input => {
+                    if (input.type === 'checkbox') {
+                        input.checked = false;
+                    } else {
+                        input.value = '';
+                    }
+                });
+                
+                this.activeFilters = {};
+                this.filteredOrders = [...this.orders];
+                this.displayOrders();
+                this.updateActiveFiltersDisplay();
+                this.updateStats();
+            }
+
+            applyQuickFilter(type) {
+                this.clearAllFilters();
+                
+                const today = new Date();
+                const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+                
+                switch (type) {
+                    case 'active':
+                        // Check all statuses except picked_up and abandoned
+                        document.getElementById('status-received').checked = true;
+                        document.getElementById('status-paid').checked = true;
+                        document.getElementById('status-in_progress').checked = true;
+                        document.getElementById('status-ready_for_pickup').checked = true;
+                        break;
+                    case 'today':
+                        document.getElementById('filter-created-from').value = startOfDay.toISOString().split('T')[0];
+                        document.getElementById('filter-created-to').value = endOfDay.toISOString().split('T')[0];
+                        break;
+                    case 'thisWeek':
+                        const startOfWeek = new Date(startOfDay);
+                        startOfWeek.setDate(startOfDay.getDate() - startOfDay.getDay());
+                        document.getElementById('filter-created-from').value = startOfWeek.toISOString().split('T')[0];
+                        document.getElementById('filter-created-to').value = endOfDay.toISOString().split('T')[0];
+                        break;
+                    case 'thisMonth':
+                        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                        document.getElementById('filter-created-from').value = startOfMonth.toISOString().split('T')[0];
+                        document.getElementById('filter-created-to').value = endOfDay.toISOString().split('T')[0];
+                        break;
+                    case 'ready':
+                        document.getElementById('status-ready_for_pickup').checked = true;
+                        break;
+                    case 'overdue':
+                        const yesterday = new Date(today);
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        document.getElementById('filter-pickup-to').value = yesterday.toISOString().split('T')[0];
+                        document.getElementById('status-ready_for_pickup').checked = true;
+                        break;
+                    case 'abandoned':
+                        document.getElementById('status-abandoned').checked = true;
+                        break;
+                }
+                
+                this.applyFilters();
+            }
+
+            // Inline editing methods
+            async updateOrderStatus(orderId, newStatus) {
+                try {
+                    const response = await fetch(`/api/orders/${orderId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+
+                    if (response.ok) {
+                        // Update the order in our local data
+                        const orderIndex = this.orders.findIndex(order => order.id === orderId);
+                        if (orderIndex !== -1) {
+                            this.orders[orderIndex].status = newStatus;
+                        }
+                        
+                        // Update filtered orders if they exist
+                        const filteredIndex = this.filteredOrders.findIndex(order => order.id === orderId);
+                        if (filteredIndex !== -1) {
+                            this.filteredOrders[filteredIndex].status = newStatus;
+                        }
+                        
+                        // Refresh the display
+                        this.displayOrders();
+                        this.updateStats();
+                        
+                        // Emit socket event for real-time updates
+                        if (this.socket) {
+                            this.socket.emit('order_updated', { orderId, status: newStatus });
+                        }
+                    } else {
+                        console.error('Failed to update order status');
+                        alert('Failed to update order status');
+                    }
+                } catch (error) {
+                    console.error('Error updating order status:', error);
+                    alert('Error updating order status');
+                }
+            }
+
+            async updateOrderPickupDateTime(orderId, newDate, newTime) {
+                try {
+                    const updateData = {};
+                    if (newDate !== undefined) updateData.pickup_date = newDate;
+                    if (newTime !== undefined) updateData.pickup_time = newTime;
+                    
+                    const response = await fetch(`/api/orders/${orderId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                        },
+                        body: JSON.stringify(updateData)
+                    });
+
+                    if (response.ok) {
+                        // Update the order in our local data
+                        const orderIndex = this.orders.findIndex(order => order.id === orderId);
+                        if (orderIndex !== -1) {
+                            if (newDate !== undefined) this.orders[orderIndex].pickup_date = newDate;
+                            if (newTime !== undefined) this.orders[orderIndex].pickup_time = newTime;
+                        }
+                        
+                        // Update filtered orders if they exist
+                        const filteredIndex = this.filteredOrders.findIndex(order => order.id === orderId);
+                        if (filteredIndex !== -1) {
+                            if (newDate !== undefined) this.filteredOrders[filteredIndex].pickup_date = newDate;
+                            if (newTime !== undefined) this.filteredOrders[filteredIndex].pickup_time = newTime;
+                        }
+                        
+                        // Refresh the display
+                        this.displayOrders();
+                        this.updateStats();
+                        
+                        // Emit socket event for real-time updates
+                        if (this.socket) {
+                            this.socket.emit('order_updated', { orderId, ...updateData });
+                        }
+                    } else {
+                        console.error('Failed to update pickup date/time');
+                        alert('Failed to update pickup date/time');
+                    }
+                } catch (error) {
+                    console.error('Error updating pickup date/time:', error);
+                    alert('Error updating pickup date/time');
                 }
             }
 
@@ -1032,6 +1882,85 @@
             adminPanel.exportOrders();
         }
 
+        // Advanced Filter Functions
+        function toggleFilterPanel() {
+            const content = document.getElementById('filter-content');
+            const toggleText = document.getElementById('filter-toggle-text');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                toggleText.textContent = 'Hide Filters';
+            } else {
+                content.style.display = 'none';
+                toggleText.textContent = 'Show Filters';
+            }
+        }
+
+        function applyFilters() {
+            adminPanel.applyFilters();
+        }
+
+        function clearAllFilters() {
+            adminPanel.clearAllFilters();
+        }
+
+        function applyQuickFilter(type) {
+            adminPanel.applyQuickFilter(type);
+        }
+
+        function removeFilter(key) {
+            // Clear the specific filter
+            switch (key) {
+                case 'createdFrom':
+                    document.getElementById('filter-created-from').value = '';
+                    break;
+                case 'createdTo':
+                    document.getElementById('filter-created-to').value = '';
+                    break;
+                case 'pickupFrom':
+                    document.getElementById('filter-pickup-from').value = '';
+                    break;
+                case 'pickupTo':
+                    document.getElementById('filter-pickup-to').value = '';
+                    break;
+                case 'statuses':
+                    document.querySelectorAll('.status-filters input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    break;
+                case 'customerName':
+                    document.getElementById('filter-customer-name').value = '';
+                    break;
+                case 'phone':
+                    document.getElementById('filter-phone').value = '';
+                    break;
+                case 'email':
+                    document.getElementById('filter-email').value = '';
+                    break;
+                case 'orderFrom':
+                    document.getElementById('filter-order-from').value = '';
+                    break;
+                case 'orderTo':
+                    document.getElementById('filter-order-to').value = '';
+                    break;
+                case 'description':
+                    document.getElementById('filter-description').value = '';
+                    break;
+            }
+            
+            // Reapply filters
+            adminPanel.applyFilters();
+        }
+
+        function saveFilterPreset() {
+            const presetName = prompt('Enter a name for this filter preset:');
+            if (presetName) {
+                const filters = adminPanel.getFilterValues();
+                localStorage.setItem(`filter_preset_${presetName}`, JSON.stringify(filters));
+                adminPanel.showAlert(`Filter preset "${presetName}" saved!`, 'success');
+            }
+        }
+
         // Initialize the admin panel
         let adminPanel;
         document.addEventListener('DOMContentLoaded', () => {
@@ -1044,6 +1973,132 @@
             if (event.target === modal) {
                 closeOrderModal();
             }
+        }
+
+        // Global functions for inline editing
+        function showStatusDropdown(orderId, currentStatus) {
+            // Remove any existing dropdowns
+            const existingDropdown = document.querySelector('.status-dropdown');
+            if (existingDropdown) {
+                existingDropdown.remove();
+            }
+
+            const statusOptions = [
+                { value: 'received', label: 'Received' },
+                { value: 'paid', label: 'Paid' },
+                { value: 'in_progress', label: 'In Progress' },
+                { value: 'ready_for_pickup', label: 'Ready for Pickup' },
+                { value: 'picked_up', label: 'Picked Up' },
+                { value: 'abandoned', label: 'Abandoned' }
+            ];
+
+            // Find the clicked status element
+            const statusElement = event.target;
+            const rect = statusElement.getBoundingClientRect();
+            
+            // Create dropdown
+            const dropdown = document.createElement('div');
+            dropdown.className = 'status-dropdown';
+            dropdown.style.left = rect.left + 'px';
+            dropdown.style.top = (rect.bottom + 5) + 'px';
+
+            // Add status options
+            statusOptions.forEach(status => {
+                const option = document.createElement('div');
+                option.className = 'status-option';
+                option.innerHTML = `
+                    <span class="status-badge status-${status.value}">${status.label}</span>
+                `;
+                
+                if (status.value === currentStatus) {
+                    option.style.backgroundColor = '#e5e7eb';
+                }
+                
+                option.addEventListener('click', () => {
+                    adminPanel.updateOrderStatus(orderId, status.value);
+                    dropdown.remove();
+                });
+                
+                dropdown.appendChild(option);
+            });
+
+            document.body.appendChild(dropdown);
+
+            // Close dropdown when clicking outside
+            const closeDropdown = (e) => {
+                if (!dropdown.contains(e.target) && e.target !== statusElement) {
+                    dropdown.remove();
+                    document.removeEventListener('click', closeDropdown);
+                }
+            };
+            
+            setTimeout(() => {
+                document.addEventListener('click', closeDropdown);
+            }, 100);
+        }
+
+        function showDatePicker(orderId, currentDate, currentTime) {
+            // Remove any existing date picker
+            const existingPicker = document.querySelector('.date-picker-overlay');
+            if (existingPicker) {
+                existingPicker.remove();
+            }
+
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'date-picker-overlay';
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'date-picker-modal';
+            
+            modal.innerHTML = `
+                <div class="date-picker-header">
+                    <h3>Set Pickup Date & Time</h3>
+                    <button onclick="closeDatePicker()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label for="pickup-date-input">Pickup Date:</label>
+                    <input type="date" id="pickup-date-input" value="${currentDate}" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label for="pickup-time-input">Pickup Time (optional):</label>
+                    <input type="time" id="pickup-time-input" value="${currentTime || ''}" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                </div>
+                <div class="date-picker-actions">
+                    <button class="btn btn-secondary" onclick="closeDatePicker()">Cancel</button>
+                    <button class="btn btn-primary" onclick="savePickupDateTime(${orderId})">Save</button>
+                </div>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+
+            // Close on overlay click
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeDatePicker();
+                }
+            });
+        }
+
+        function closeDatePicker() {
+            const picker = document.querySelector('.date-picker-overlay');
+            if (picker) {
+                picker.remove();
+            }
+        }
+
+        function savePickupDateTime(orderId) {
+            const dateInput = document.getElementById('pickup-date-input');
+            const timeInput = document.getElementById('pickup-time-input');
+            const newDate = dateInput.value;
+            const newTime = timeInput.value;
+            
+            // Update both date and time
+            adminPanel.updateOrderPickupDateTime(orderId, newDate || null, newTime || null);
+            
+            closeDatePicker();
         }
     </script>
 </body>

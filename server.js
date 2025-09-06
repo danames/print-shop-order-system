@@ -9,7 +9,7 @@ const multer = require('multer');
 const fs = require('fs');
 
 // Import routes
-const authRoutes = require('./src/backend/routes/auth');
+const { router: authRoutes } = require('./src/backend/routes/auth');
 const orderRoutes = require('./src/backend/routes/orders');
 const settingsRoutes = require('./src/backend/routes/settings');
 const uploadRoutes = require('./src/backend/routes/upload');
@@ -29,7 +29,22 @@ const io = socketIo(server, {
 const PORT = process.env.PORT || 3000;
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
+      connectSrc: ["'self'", "ws:", "wss:"],
+      fontSrc: ["'self'", "https:", "data:"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"],
+    },
+  },
+}));
 app.use(cors());
 
 // Rate limiting

@@ -145,7 +145,58 @@ router.post('/', [
   });
 });
 
-// Update order (admin only)
+// Partial update order (admin only) - for inline editing
+router.patch('/:id', authenticateToken, (req, res) => {
+  const { id } = req.params;
+  const db = getDb();
+  
+  // Only allow specific fields for partial updates
+  const allowedFields = ['status', 'pickup_date', 'pickup_time', 'notes'];
+  const updateData = {};
+  
+  // Build update object with only allowed fields that are provided
+  allowedFields.forEach(field => {
+    if (req.body[field] !== undefined) {
+      updateData[field] = req.body[field];
+    }
+  });
+  
+  // Add updated_at timestamp
+  updateData.updated_at = new Date().toISOString();
+  
+  if (Object.keys(updateData).length === 1) { // Only updated_at
+    return res.status(400).json({ message: 'No valid fields to update' });
+  }
+  
+  const setClause = Object.keys(updateData).map(key => `${key} = ?`).join(', ');
+  const values = Object.values(updateData);
+  values.push(id);
+  
+  db.run(
+    `UPDATE orders SET ${setClause} WHERE id = ?`,
+    values,
+    function(err) {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ message: 'Internal server error' });
+      }
+      
+      if (this.changes === 0) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+      
+      // Emit real-time update
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('order_updated', { orderId: id, updates: updateData });
+      }
+      
+      res.json({ message: 'Order updated successfully', updates: updateData });
+    }
+  );
+});
+
+// Update order (admin only) - full update
 router.put('/:id', authenticateToken, [
   body('customer_first_name').notEmpty().withMessage('First name is required'),
   body('customer_last_name').notEmpty().withMessage('Last name is required'),
