@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pioneer Party - Order Print Services</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         * {
             margin: 0;
@@ -483,16 +484,10 @@
                             <textarea id="special-instructions" name="special_instructions" placeholder="Any special requirements or instructions..."></textarea>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="pickup-date">Preferred Pickup Date *</label>
-                                <input type="date" id="pickup-date" name="pickup_date" required>
-                                <small>Note: This is your preferred date. We will confirm the actual pickup time.</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="pickup-time">Preferred Pickup Time</label>
-                                <input type="time" id="pickup-time" name="pickup_time">
-                            </div>
+                        <div class="form-group">
+                            <label for="pickup-datetime">Preferred Pickup Date & Time *</label>
+                            <input type="text" id="pickup-datetime" name="pickup_datetime" placeholder="Select date and time" required>
+                            <small>Note: This is your preferred date and time. We will confirm the actual pickup time.</small>
                         </div>
                     </div>
 
@@ -539,6 +534,7 @@
     <script>
         class OrderForm {
             constructor() {
+                this.settings = null;
                 this.pricing = {
                     paper_sizes: {
                         'letter': 0.10,
@@ -575,8 +571,8 @@
 
             init() {
                 this.setupEventListeners();
-                this.setMinPickupDate();
                 this.loadPricing();
+                this.loadSettingsAndInitializeFlatpickr();
             }
 
             setupEventListeners() {
@@ -625,12 +621,6 @@
                 });
             }
 
-            setMinPickupDate() {
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const minDate = tomorrow.toISOString().split('T')[0];
-                document.getElementById('pickup-date').setAttribute('min', minDate);
-            }
 
             async loadPricing() {
                 try {
@@ -797,8 +787,8 @@
                         customer_address: formData.get('customer_address'),
                         order_description: formData.get('order_description') || '',
                         special_instructions: formData.get('special_instructions') || '',
-                        pickup_date: formData.get('pickup_date'),
-                        pickup_time: formData.get('pickup_time') || '',
+                        // Parse flatpickr datetime value
+                        pickup_datetime: formData.get('pickup_datetime'),
                         copies: parseInt(formData.get('copies')) || 1,
                         paper_size: formData.get('paper_size'),
                         paper_type: formData.get('paper_type'),
@@ -907,10 +897,90 @@
             document.getElementById('price-estimate').style.display = 'none';
         }
 
+        async loadSettingsAndInitializeFlatpickr() {
+            try {
+                const response = await fetch('/api/settings');
+                if (response.ok) {
+                    const data = await response.json();
+                    this.settings = data;
+                    this.initializeFlatpickr();
+                } else {
+                    console.error('Failed to load settings');
+                    // Initialize flatpickr without restrictions as fallback
+                    this.initializeFlatpickr();
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                // Initialize flatpickr without restrictions as fallback
+                this.initializeFlatpickr();
+            }
+        }
+
+        initializeFlatpickr() {
+            const datetimeInput = document.getElementById('pickup-datetime');
+            if (!datetimeInput) {
+                console.error('Pickup datetime input not found');
+                return;
+            }
+
+            if (!this.settings || !this.settings.pickup_settings) {
+                console.log('No pickup settings available, initializing flatpickr without restrictions');
+                // Initialize flatpickr without restrictions
+                flatpickr(datetimeInput, {
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i",
+                    time_24hr: false,
+                    minuteIncrement: 30,
+                    minDate: "today"
+                });
+                return;
+            }
+
+            const pickupSettings = this.settings.pickup_settings;
+            
+            // Build disabled days array
+            const disabledDays = [];
+            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            dayNames.forEach((dayName, index) => {
+                if (!pickupSettings.pickup_days[dayName]) {
+                    disabledDays.push(index);
+                }
+            });
+
+            console.log('Initializing flatpickr with restrictions:', {
+                disabledDays,
+                timeIncrement: pickupSettings.time_increment,
+                minTime: pickupSettings.pickup_start_time,
+                maxTime: pickupSettings.pickup_end_time
+            });
+
+            // Initialize flatpickr with restrictions
+            flatpickr(datetimeInput, {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: false,
+                minuteIncrement: parseInt(pickupSettings.time_increment),
+                minTime: pickupSettings.pickup_start_time,
+                maxTime: pickupSettings.pickup_end_time,
+                minDate: "today",
+                disable: [
+                    function(date) {
+                        // Disable specific days of the week
+                        const dayOfWeek = date.getDay();
+                        return disabledDays.includes(dayOfWeek);
+                    }
+                ],
+                onChange: function(selectedDates, dateStr, instance) {
+                    console.log('Order form flatpickr date changed:', dateStr);
+                }
+            });
+        }
+
         // Initialize the order form
         document.addEventListener('DOMContentLoaded', () => {
             new OrderForm();
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 </html>

@@ -58,7 +58,8 @@ router.put('/', authenticateToken, [
   body('page_rotation_seconds').optional().isInt({ min: 5, max: 60 }).withMessage('Page rotation must be between 5 and 60 seconds'),
   body('status_colors').optional().isObject().withMessage('Status colors must be an object'),
   body('business_hours').optional().isObject().withMessage('Business hours must be an object'),
-  body('pricing_table').optional().isObject().withMessage('Pricing table must be an object')
+  body('pricing_table').optional().isObject().withMessage('Pricing table must be an object'),
+  body('pickup_settings').optional().isObject().withMessage('Pickup settings must be an object')
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

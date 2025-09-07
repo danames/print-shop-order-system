@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pioneer Party - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         * {
             margin: 0;
@@ -606,6 +607,60 @@
             justify-content: flex-end;
             margin-top: 20px;
         }
+
+        /* Day selector styles */
+        .day-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .day-box {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .day-box:hover {
+            border-color: #3b82f6;
+            background-color: #f3f4f6;
+        }
+
+        .day-box.active {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .day-label {
+            font-weight: bold;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .day-checkbox {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .day-checkbox:checked + .day-label {
+            color: white;
+        }
+
+        .day-box:has(.day-checkbox:checked) {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -843,6 +898,59 @@
                                 <input type="color" id="color-ready_for_pickup" value="#FCD34D">
                             </div>
                         </div>
+
+                        <div class="settings-section">
+                            <h3>Pickup Date/Time</h3>
+                            <div class="form-group">
+                                <label for="pickup-start-time">Pickup Start Time:</label>
+                                <input type="text" id="pickup-start-time" placeholder="Select start time" value="09:00">
+                            </div>
+                            <div class="form-group">
+                                <label for="pickup-end-time">Pickup End Time:</label>
+                                <input type="text" id="pickup-end-time" placeholder="Select end time" value="17:00">
+                            </div>
+                            <div class="form-group">
+                                <label>Available Pickup Days:</label>
+                                <div class="day-selector">
+                                    <div class="day-box" data-day="sunday">
+                                        <span class="day-label">S</span>
+                                        <input type="checkbox" id="day-sunday" class="day-checkbox">
+                                    </div>
+                                    <div class="day-box" data-day="monday">
+                                        <span class="day-label">M</span>
+                                        <input type="checkbox" id="day-monday" class="day-checkbox" checked>
+                                    </div>
+                                    <div class="day-box" data-day="tuesday">
+                                        <span class="day-label">T</span>
+                                        <input type="checkbox" id="day-tuesday" class="day-checkbox" checked>
+                                    </div>
+                                    <div class="day-box" data-day="wednesday">
+                                        <span class="day-label">W</span>
+                                        <input type="checkbox" id="day-wednesday" class="day-checkbox" checked>
+                                    </div>
+                                    <div class="day-box" data-day="thursday">
+                                        <span class="day-label">Th</span>
+                                        <input type="checkbox" id="day-thursday" class="day-checkbox" checked>
+                                    </div>
+                                    <div class="day-box" data-day="friday">
+                                        <span class="day-label">F</span>
+                                        <input type="checkbox" id="day-friday" class="day-checkbox" checked>
+                                    </div>
+                                    <div class="day-box" data-day="saturday">
+                                        <span class="day-label">S</span>
+                                        <input type="checkbox" id="day-saturday" class="day-checkbox" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="time-increment">Time Increment:</label>
+                                <select id="time-increment" class="form-control">
+                                    <option value="15">15 Minutes</option>
+                                    <option value="30">30 Minutes</option>
+                                    <option value="60">Hourly</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-actions">
@@ -898,15 +1006,9 @@
                         <input type="text" id="customer-address" required>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="pickup-date">Pickup Date:</label>
-                            <input type="date" id="pickup-date" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="pickup-time">Pickup Time:</label>
-                            <input type="time" id="pickup-time">
-                        </div>
+                    <div class="form-group">
+                        <label for="pickup-datetime">Pickup Date & Time:</label>
+                        <input type="text" id="pickup-datetime" placeholder="Select date and time">
                     </div>
 
                     <div class="form-row">
@@ -961,6 +1063,7 @@
                 this.currentUser = null;
                 this.socket = null;
                 this.activeFilters = {};
+                this.flatpickrInstances = []; // Store flatpickr instances for dynamic updates
                 
                 this.init();
             }
@@ -1035,6 +1138,14 @@
                 // Search
                 document.getElementById('search-orders').addEventListener('input', (e) => {
                     this.filterOrders(e.target.value);
+                });
+
+                // Day selector click handlers
+                document.querySelectorAll('.day-box').forEach(dayBox => {
+                    dayBox.addEventListener('click', (e) => {
+                        const checkbox = dayBox.querySelector('.day-checkbox');
+                        checkbox.checked = !checkbox.checked;
+                    });
                 });
             }
 
@@ -1265,6 +1376,26 @@
                     document.getElementById('color-in_progress').value = this.settings.status_colors.in_progress || '#F59E0B';
                     document.getElementById('color-ready_for_pickup').value = this.settings.status_colors.ready_for_pickup || '#FCD34D';
                 }
+
+        // Populate pickup settings
+        if (this.settings.pickup_settings) {
+            document.getElementById('pickup-start-time').value = this.settings.pickup_settings.pickup_start_time || '09:00';
+            document.getElementById('pickup-end-time').value = this.settings.pickup_settings.pickup_end_time || '17:00';
+            document.getElementById('time-increment').value = this.settings.pickup_settings.time_increment || '30';
+            
+            if (this.settings.pickup_settings.pickup_days) {
+                const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                days.forEach(day => {
+                    const checkbox = document.getElementById(`day-${day}`);
+                    if (checkbox) {
+                        checkbox.checked = this.settings.pickup_settings.pickup_days[day] || false;
+                    }
+                });
+            }
+            
+            // Initialize flatpickr for time inputs in settings (no restrictions)
+            this.initializeSettingsTimePickers();
+        }
             }
 
             async saveSettings() {
@@ -1276,7 +1407,21 @@
                         paid: document.getElementById('color-paid').value,
                         in_progress: document.getElementById('color-in_progress').value,
                         ready_for_pickup: document.getElementById('color-ready_for_pickup').value
-                    }
+                    },
+            pickup_settings: {
+                pickup_start_time: document.getElementById('pickup-start-time').value,
+                pickup_end_time: document.getElementById('pickup-end-time').value,
+                time_increment: document.getElementById('time-increment').value,
+                pickup_days: {
+                    sunday: document.getElementById('day-sunday').checked,
+                    monday: document.getElementById('day-monday').checked,
+                    tuesday: document.getElementById('day-tuesday').checked,
+                    wednesday: document.getElementById('day-wednesday').checked,
+                    thursday: document.getElementById('day-thursday').checked,
+                    friday: document.getElementById('day-friday').checked,
+                    saturday: document.getElementById('day-saturday').checked
+                }
+            }
                 };
 
                 try {
@@ -1292,6 +1437,9 @@
 
                     if (response.ok) {
                         this.showAlert('Settings saved successfully!', 'success');
+                        
+                        // Update all existing flatpickr instances with new settings
+                        this.updateFlatpickrInstances();
                     } else {
                         this.showAlert('Failed to save settings', 'error');
                     }
@@ -1334,14 +1482,24 @@
                 const orderId = document.getElementById('order-id').value;
                 const isEdit = orderId !== '';
                 
+                // Parse flatpickr datetime value
+                const datetimeValue = document.getElementById('pickup-datetime').value;
+                let pickupDate = '';
+                let pickupTime = '';
+                if (datetimeValue) {
+                    const dateTime = new Date(datetimeValue);
+                    pickupDate = dateTime.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    pickupTime = dateTime.toTimeString().split(' ')[0].substring(0, 5); // HH:MM format
+                }
+                
                 const orderData = {
                     customer_first_name: document.getElementById('customer-first-name').value,
                     customer_last_name: document.getElementById('customer-last-name').value,
                     customer_phone: document.getElementById('customer-phone').value,
                     customer_email: document.getElementById('customer-email').value,
                     customer_address: document.getElementById('customer-address').value,
-                    pickup_date: document.getElementById('pickup-date').value,
-                    pickup_time: document.getElementById('pickup-time').value,
+                    pickup_date: pickupDate,
+                    pickup_time: pickupTime,
                     status: document.getElementById('status').value,
                     copies: parseInt(document.getElementById('copies').value),
                     order_description: document.getElementById('order-description').value,
@@ -1800,10 +1958,95 @@
                     alertDiv.remove();
                 }, 5000);
             }
+
+            updateFlatpickrInstances() {
+                console.log('Updating all flatpickr instances with new settings...');
+                
+                if (!this.settings.pickup_settings) {
+                    console.log('No pickup settings available for updating flatpickr instances');
+                    return;
+                }
+                
+                const pickupSettings = this.settings.pickup_settings;
+                
+                // Build disabled days array
+                const disabledDays = [];
+                const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                dayNames.forEach((dayName, index) => {
+                    if (!pickupSettings.pickup_days[dayName]) {
+                        disabledDays.push(index);
+                    }
+                });
+                
+                console.log('Updating flatpickr instances with:', {
+                    disabledDays,
+                    timeIncrement: pickupSettings.time_increment,
+                    minTime: pickupSettings.pickup_start_time,
+                    maxTime: pickupSettings.pickup_end_time
+                });
+                
+                // Update each flatpickr instance
+                this.flatpickrInstances.forEach((instance, index) => {
+                    if (instance && typeof instance.set === 'function') {
+                        try {
+                            instance.set('disable', [
+                                function(date) {
+                                    // Disable specific days of the week
+                                    const dayOfWeek = date.getDay();
+                                    return disabledDays.includes(dayOfWeek);
+                                }
+                            ]);
+                            instance.set('minuteIncrement', parseInt(pickupSettings.time_increment));
+                            instance.set('minTime', pickupSettings.pickup_start_time);
+                            instance.set('maxTime', pickupSettings.pickup_end_time);
+                            console.log(`Updated flatpickr instance ${index}`);
+                        } catch (error) {
+                            console.error(`Error updating flatpickr instance ${index}:`, error);
+                        }
+                    }
+                });
+            }
+
+            initializeSettingsTimePickers() {
+            // Initialize flatpickr for start time (time only, no restrictions)
+            const startTimeInput = document.getElementById('pickup-start-time');
+            if (startTimeInput) {
+                flatpickr(startTimeInput, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    minuteIncrement: 15,
+                    defaultDate: startTimeInput.value || "09:00"
+                });
+            }
+
+            // Initialize flatpickr for end time (time only, no restrictions)
+            const endTimeInput = document.getElementById('pickup-end-time');
+            if (endTimeInput) {
+                flatpickr(endTimeInput, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    minuteIncrement: 15,
+                    defaultDate: endTimeInput.value || "17:00"
+                });
+            }
         }
+    }
 
         // Global functions for order management
         function openOrderModal(orderId = null) {
+            // Ensure settings are loaded before opening modal
+            if (!adminPanel.settings || !adminPanel.settings.pickup_settings) {
+                console.log('Settings not loaded yet for edit modal, loading settings first...');
+                adminPanel.loadSettings().then(() => {
+                    openOrderModal(orderId);
+                });
+                return;
+            }
+            
             const modal = document.getElementById('order-modal');
             const title = document.getElementById('modal-title');
             const form = document.getElementById('order-form');
@@ -1819,8 +2062,15 @@
                     document.getElementById('customer-phone').value = order.customer_phone;
                     document.getElementById('customer-email').value = order.customer_email;
                     document.getElementById('customer-address').value = order.customer_address;
-                    document.getElementById('pickup-date').value = order.pickup_date || '';
-                    document.getElementById('pickup-time').value = order.pickup_time || '';
+                    // Combine date and time for flatpickr
+                    let datetimeValue = '';
+                    if (order.pickup_date) {
+                        datetimeValue = order.pickup_date;
+                        if (order.pickup_time) {
+                            datetimeValue += ' ' + order.pickup_time;
+                        }
+                    }
+                    document.getElementById('pickup-datetime').value = datetimeValue;
                     document.getElementById('status').value = order.status;
                     document.getElementById('copies').value = order.copies || 1;
                     document.getElementById('order-description').value = order.order_description || '';
@@ -1834,6 +2084,11 @@
             }
             
             modal.style.display = 'block';
+            
+            // Apply pickup restrictions to the edit order modal
+            setTimeout(() => {
+                applyPickupRestrictionsToEditModal();
+            }, 100);
         }
 
         function closeOrderModal() {
@@ -2038,6 +2293,15 @@
         }
 
         function showDatePicker(orderId, currentDate, currentTime) {
+            // Ensure settings are loaded before opening picker
+            if (!adminPanel.settings || !adminPanel.settings.pickup_settings) {
+                console.log('Settings not loaded yet, loading settings first...');
+                adminPanel.loadSettings().then(() => {
+                    showDatePicker(orderId, currentDate, currentTime);
+                });
+                return;
+            }
+            
             // Remove any existing date picker
             const existingPicker = document.querySelector('.date-picker-overlay');
             if (existingPicker) {
@@ -2058,12 +2322,8 @@
                     <button onclick="closeDatePicker()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
                 </div>
                 <div style="margin-bottom: 16px;">
-                    <label for="pickup-date-input">Pickup Date:</label>
-                    <input type="date" id="pickup-date-input" value="${currentDate}" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
-                </div>
-                <div style="margin-bottom: 16px;">
-                    <label for="pickup-time-input">Pickup Time (optional):</label>
-                    <input type="time" id="pickup-time-input" value="${currentTime || ''}" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                    <label for="pickup-datetime-input">Pickup Date & Time:</label>
+                    <input type="text" id="pickup-datetime-input" placeholder="Select date and time" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
                 </div>
                 <div class="date-picker-actions">
                     <button class="btn btn-secondary" onclick="closeDatePicker()">Cancel</button>
@@ -2073,6 +2333,11 @@
             
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
+
+            // Apply pickup settings restrictions with a small delay to ensure DOM is ready
+            setTimeout(() => {
+                applyPickupRestrictions();
+            }, 100);
 
             // Close on overlay click
             overlay.addEventListener('click', (e) => {
@@ -2090,16 +2355,143 @@
         }
 
         function savePickupDateTime(orderId) {
-            const dateInput = document.getElementById('pickup-date-input');
-            const timeInput = document.getElementById('pickup-time-input');
-            const newDate = dateInput.value;
-            const newTime = timeInput.value;
+            const datetimeInput = document.getElementById('pickup-datetime-input');
+            const datetimeValue = datetimeInput.value;
             
-            // Update both date and time
-            adminPanel.updateOrderPickupDateTime(orderId, newDate || null, newTime || null);
+            if (datetimeValue) {
+                // Parse the datetime value to extract date and time
+                const dateTime = new Date(datetimeValue);
+                const newDate = dateTime.toISOString().split('T')[0]; // YYYY-MM-DD format
+                const newTime = dateTime.toTimeString().split(' ')[0].substring(0, 5); // HH:MM format
+                
+                // Update both date and time
+                adminPanel.updateOrderPickupDateTime(orderId, newDate, newTime);
+            } else {
+                // Clear the pickup date/time
+                adminPanel.updateOrderPickupDateTime(orderId, null, null);
+            }
             
             closeDatePicker();
         }
+
+        function applyPickupRestrictions() {
+            console.log('=== APPLYING FLATPICKR RESTRICTIONS ===');
+            
+            if (!adminPanel || !adminPanel.settings || !adminPanel.settings.pickup_settings) {
+                console.log('No pickup settings available, skipping restrictions');
+                return;
+            }
+            
+            const pickupSettings = adminPanel.settings.pickup_settings;
+            const datetimeInput = document.getElementById('pickup-datetime-input');
+            
+            console.log('Pickup settings:', pickupSettings);
+            console.log('Datetime input found:', !!datetimeInput);
+            
+            if (!datetimeInput) {
+                console.log('Datetime input not found');
+                return;
+            }
+            
+            // Build disabled days array (flatpickr uses 0=Sunday, 1=Monday, etc.)
+            const disabledDays = [];
+            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            dayNames.forEach((dayName, index) => {
+                if (!pickupSettings.pickup_days[dayName]) {
+                    disabledDays.push(index);
+                }
+            });
+            
+            console.log('Pickup days settings:', pickupSettings.pickup_days);
+            console.log('Disabled days array:', disabledDays);
+            console.log('Day names mapping:', dayNames);
+            
+            // Initialize flatpickr with restrictions
+            const fpInstance = flatpickr(datetimeInput, {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: false,
+                minuteIncrement: parseInt(pickupSettings.time_increment),
+                minTime: pickupSettings.pickup_start_time,
+                maxTime: pickupSettings.pickup_end_time,
+                disable: [
+                    function(date) {
+                        // Disable specific days of the week
+                        const dayOfWeek = date.getDay();
+                        return disabledDays.includes(dayOfWeek);
+                    }
+                ],
+                defaultDate: datetimeInput.value || null,
+                onChange: function(selectedDates, dateStr, instance) {
+                    console.log('Flatpickr date changed:', dateStr);
+                }
+            });
+            
+            // Store the instance for dynamic updates
+            adminPanel.flatpickrInstances.push(fpInstance);
+            
+            console.log('=== FLATPICKR RESTRICTIONS APPLIED ===');
+        }
+
+        function applyPickupRestrictionsToEditModal() {
+            console.log('=== APPLYING FLATPICKR RESTRICTIONS TO EDIT MODAL ===');
+            
+            if (!adminPanel || !adminPanel.settings || !adminPanel.settings.pickup_settings) {
+                console.log('No pickup settings available for edit modal, skipping restrictions');
+                return;
+            }
+            
+            const pickupSettings = adminPanel.settings.pickup_settings;
+            const datetimeInput = document.getElementById('pickup-datetime');
+            
+            console.log('Edit modal - Pickup settings:', pickupSettings);
+            console.log('Edit modal - Datetime input found:', !!datetimeInput);
+            
+            if (!datetimeInput) {
+                console.log('Edit modal - Datetime input not found');
+                return;
+            }
+            
+            // Build disabled days array (flatpickr uses 0=Sunday, 1=Monday, etc.)
+            const disabledDays = [];
+            const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            dayNames.forEach((dayName, index) => {
+                if (!pickupSettings.pickup_days[dayName]) {
+                    disabledDays.push(index);
+                }
+            });
+            
+            console.log('Edit modal - Pickup days settings:', pickupSettings.pickup_days);
+            console.log('Edit modal - Disabled days array:', disabledDays);
+            console.log('Edit modal - Day names mapping:', dayNames);
+            
+            // Initialize flatpickr with restrictions
+            const fpInstance = flatpickr(datetimeInput, {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: false,
+                minuteIncrement: parseInt(pickupSettings.time_increment),
+                minTime: pickupSettings.pickup_start_time,
+                maxTime: pickupSettings.pickup_end_time,
+                disable: [
+                    function(date) {
+                        // Disable specific days of the week
+                        const dayOfWeek = date.getDay();
+                        return disabledDays.includes(dayOfWeek);
+                    }
+                ],
+                defaultDate: datetimeInput.value || null,
+                onChange: function(selectedDates, dateStr, instance) {
+                    console.log('Edit modal - Flatpickr date changed:', dateStr);
+                }
+            });
+            
+            // Store the instance for dynamic updates
+            adminPanel.flatpickrInstances.push(fpInstance);
+            
+            console.log('=== EDIT MODAL FLATPICKR RESTRICTIONS APPLIED ===');
+        }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 </html>

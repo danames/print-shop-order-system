@@ -33,9 +33,9 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io", "https://cdn.jsdelivr.net"],
       scriptSrcAttr: ["'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
       imgSrc: ["'self'", "data:"],
       connectSrc: ["'self'", "ws:", "wss:"],
       fontSrc: ["'self'", "https:", "data:"],

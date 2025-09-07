@@ -69,7 +69,7 @@ router.post('/', [
   body('customer_phone').notEmpty().withMessage('Phone is required'),
   body('customer_email').isEmail().withMessage('Valid email is required'),
   body('customer_address').notEmpty().withMessage('Address is required'),
-  body('pickup_date').notEmpty().withMessage('Pickup date is required')
+  body('pickup_datetime').notEmpty().withMessage('Pickup date and time is required')
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -97,8 +97,9 @@ router.post('/', [
       order_description: req.body.order_description || '',
       special_instructions: req.body.special_instructions || '',
       status: req.body.status || 'received',
-      pickup_date: req.body.pickup_date,
-      pickup_time: req.body.pickup_time || '',
+      // Parse pickup_datetime to separate date and time
+      pickup_date: req.body.pickup_datetime ? req.body.pickup_datetime.split(' ')[0] : '',
+      pickup_time: req.body.pickup_datetime ? req.body.pickup_datetime.split(' ')[1] || '' : '',
       created_by: req.body.created_by || 'public',
       notes: req.body.notes || '',
       file_path: req.body.file_path || '',
@@ -221,8 +222,9 @@ router.put('/:id', authenticateToken, [
     order_description: req.body.order_description || '',
     special_instructions: req.body.special_instructions || '',
     status: req.body.status || 'received',
-    pickup_date: req.body.pickup_date,
-    pickup_time: req.body.pickup_time || '',
+    // Parse pickup_datetime to separate date and time (if provided)
+    pickup_date: req.body.pickup_datetime ? req.body.pickup_datetime.split(' ')[0] : req.body.pickup_date,
+    pickup_time: req.body.pickup_datetime ? req.body.pickup_datetime.split(' ')[1] || '' : req.body.pickup_time || '',
     notes: req.body.notes || '',
     copies: req.body.copies || 1,
     paper_size: req.body.paper_size || '',

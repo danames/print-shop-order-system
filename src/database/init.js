@@ -160,7 +160,21 @@ const insertDefaultData = () => {
           'folding': 0.25,
           'cutting': 0.50
         }
-      })]
+      })],
+        ['pickup_settings', JSON.stringify({
+          pickup_start_time: '09:00',
+          pickup_end_time: '17:00',
+          pickup_days: {
+            sunday: false,
+            monday: true,
+            tuesday: true,
+            wednesday: true,
+            thursday: true,
+            friday: true,
+            saturday: true
+          },
+          time_increment: '30' // 15, 30, or 60 minutes
+        })]
     ];
 
     let completed = 0;
