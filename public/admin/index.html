@@ -2390,30 +2390,8 @@
             openOrderModal(orderId);
         }
 
-        async function deleteOrder(orderId) {
-            if (!confirm('Are you sure you want to delete this order?')) {
-                return;
-            }
-
-            try {
-                const token = localStorage.getItem('admin_token');
-                const response = await fetch(`/api/orders/${orderId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    adminPanel.loadOrders();
-                    adminPanel.showAlert('Order deleted successfully!', 'success');
-                } else {
-                    adminPanel.showAlert('Failed to delete order', 'error');
-                }
-            } catch (error) {
-                console.error('Failed to delete order:', error);
-                adminPanel.showAlert('Failed to delete order', 'error');
-            }
+        function deleteOrder(orderId) {
+            openDeleteConfirmationModal(orderId);
         }
 
         function logout() {
@@ -2451,6 +2429,89 @@
 
         function exportOrders() {
             adminPanel.exportOrders();
+        }
+
+        // Delete confirmation modal functions
+        let orderToDelete = null;
+
+        function openDeleteConfirmationModal(orderId) {
+            // Find the order details
+            const order = adminPanel.orders.find(o => o.id === orderId);
+            if (!order) {
+                console.error('Order not found:', orderId);
+                return;
+            }
+
+            orderToDelete = orderId;
+
+            // Populate order details
+            const orderDetails = document.getElementById('delete-order-details');
+            orderDetails.innerHTML = `
+                <strong>Order #${order.order_number}</strong><br>
+                Customer: ${order.customer_first_name} ${order.customer_last_name}<br>
+                Phone: ${order.customer_phone}<br>
+                Status: ${adminPanel.formatStatusText(order.status)}
+            `;
+
+            // Show modal
+            const modal = document.getElementById('delete-confirmation-modal');
+            modal.style.display = 'block';
+        }
+
+        function closeDeleteConfirmationModal() {
+            const modal = document.getElementById('delete-confirmation-modal');
+            modal.style.display = 'none';
+            orderToDelete = null;
+        }
+
+        async function confirmDeleteOrder() {
+            if (!orderToDelete) {
+                console.error('No order selected for deletion');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('admin_token');
+                if (!token) {
+                    adminPanel.showAlert('Authentication required. Please log in again.', 'error');
+                    return;
+                }
+
+                const response = await fetch(`/api/orders/${orderToDelete}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    adminPanel.showAlert('Order deleted successfully!', 'success');
+                    
+                    // Close modal
+                    closeDeleteConfirmationModal();
+                    
+                    // Reload orders
+                    await adminPanel.loadOrders();
+                    
+                    // Emit socket event for real-time updates
+                    if (window.io) {
+                        const socket = io();
+                        socket.emit('order_deleted', { orderId: orderToDelete });
+                    }
+                } else if (response.status === 401 || response.status === 403) {
+                    adminPanel.showAlert('Session expired. Please log in again.', 'error');
+                    setTimeout(() => {
+                        window.location.href = '/admin/login.html';
+                    }, 2000);
+                } else {
+                    const errorData = await response.json();
+                    adminPanel.showAlert(errorData.error || 'Failed to delete order', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting order:', error);
+                adminPanel.showAlert('An error occurred while deleting the order', 'error');
+            }
         }
 
         // Advanced Filter Functions
@@ -2966,6 +3027,27 @@
             </div>
             <div class="date-picker-actions">
                 <button class="btn btn-secondary" onclick="closeUnavailableDatesModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirmation-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <span class="close" onclick="closeDeleteConfirmationModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this order?</p>
+                <p><strong>This action cannot be undone.</strong></p>
+                <div id="delete-order-details" style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                    <!-- Order details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteConfirmationModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDeleteOrder()">Delete Order</button>
             </div>
         </div>
     </div>

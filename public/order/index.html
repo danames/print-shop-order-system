@@ -156,6 +156,76 @@
             display: none;
         }
 
+        /* Validation Styles */
+        .form-group {
+            position: relative;
+        }
+
+        .validation-indicator {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            pointer-events: none;
+            z-index: 10;
+            line-height: 1;
+        }
+        
+        /* Position validation indicators to align with input fields */
+        .form-group input + .validation-indicator {
+            top: calc(50% + 12px); /* Adjust for label height */
+        }
+        
+        /* Reset positioning for phone and email fields that have validation messages below */
+        #phone-indicator,
+        #email-indicator {
+            top: 50%;
+        }
+
+        .validation-indicator.valid {
+            color: #10B981;
+        }
+
+        .validation-indicator.invalid {
+            color: #EF4444;
+        }
+
+        .validation-message {
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .validation-message.error {
+            color: #EF4444;
+            display: block;
+        }
+
+        .validation-message.success {
+            color: #10B981;
+            display: block;
+        }
+
+        input.valid {
+            border-color: #10B981;
+        }
+
+        input.invalid {
+            border-color: #EF4444;
+        }
+
+        .phone-hint {
+            color: #9CA3AF;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .submit-button:disabled {
+            background-color: #9CA3AF;
+            cursor: not-allowed;
+        }
+
         .price-estimate {
             background-color: #f0fdf4;
             border: 2px solid #10B981;
@@ -338,27 +408,34 @@
                             <div class="form-group">
                                 <label for="customer-first-name">First Name *</label>
                                 <input type="text" id="customer-first-name" name="customer_first_name" required>
+                                <div class="validation-indicator" id="first-name-indicator"></div>
                             </div>
                             <div class="form-group">
                                 <label for="customer-last-name">Last Name *</label>
                                 <input type="text" id="customer-last-name" name="customer_last_name" required>
+                                <div class="validation-indicator" id="last-name-indicator"></div>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="customer-phone">Phone Number *</label>
-                                <input type="tel" id="customer-phone" name="customer_phone" required>
+                                <input type="tel" id="customer-phone" name="customer_phone" placeholder="(123) 456-7890" required>
+                                <div class="validation-indicator" id="phone-indicator"></div>
+                                <div class="validation-message" id="phone-message"></div>
+                                <div class="phone-hint">Format: (123) 456-7890</div>
                             </div>
                             <div class="form-group">
                                 <label for="customer-email">Email Address *</label>
                                 <input type="email" id="customer-email" name="customer_email" required>
+                                <div class="validation-indicator" id="email-indicator"></div>
+                                <div class="validation-message" id="email-message"></div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="customer-address">Address *</label>
-                            <input type="text" id="customer-address" name="customer_address" required>
+                            <label for="customer-address">Address <span style="color: #9CA3AF; font-weight: normal;">(Optional)</span></label>
+                            <input type="text" id="customer-address" name="customer_address">
                         </div>
                     </div>
 
@@ -374,7 +451,7 @@
                                 <label for="paper-size">Paper Size *</label>
                                 <select id="paper-size" name="paper_size" required>
                                     <option value="">Select Size</option>
-                                    <option value="letter">Letter (8.5" x 11")</option>
+                                    <option value="letter" selected>Letter (8.5" x 11")</option>
                                     <option value="legal">Legal (8.5" x 14")</option>
                                     <option value="a4">A4 (8.27" x 11.69")</option>
                                     <option value="11x17">11" x 17"</option>
@@ -387,7 +464,7 @@
                                 <label for="paper-type">Paper Type *</label>
                                 <select id="paper-type" name="paper_type" required>
                                     <option value="">Select Type</option>
-                                    <option value="standard">Standard</option>
+                                    <option value="standard" selected>Standard</option>
                                     <option value="glossy">Glossy</option>
                                     <option value="matte">Matte</option>
                                     <option value="cardstock">Cardstock</option>
@@ -397,7 +474,7 @@
                                 <label for="color-mode">Color Mode *</label>
                                 <select id="color-mode" name="color_mode" required>
                                     <option value="">Select Mode</option>
-                                    <option value="black_white">Black & White</option>
+                                    <option value="black_white" selected>Black & White</option>
                                     <option value="color">Color</option>
                                 </select>
                             </div>
@@ -508,7 +585,7 @@
 
                     <!-- Submit Button -->
                     <div class="form-section">
-                        <button type="submit" class="btn btn-primary btn-full">Submit Order</button>
+                        <button type="submit" class="btn btn-primary btn-full submit-button" id="submit-button" disabled>Submit Order</button>
                         <small style="display: block; text-align: center; margin-top: 15px; color: #666;">
                             By submitting this order, you agree to our terms of service and pricing.
                         </small>
@@ -573,6 +650,225 @@
                 this.setupEventListeners();
                 this.loadPricing();
                 this.loadSettingsAndInitializeFlatpickr();
+                this.setupValidation();
+                
+                // Calculate initial price with default values
+                setTimeout(() => {
+                    this.calculatePrice();
+                }, 100); // Small delay to ensure all elements are loaded
+            }
+
+            setupValidation() {
+                // Phone number formatting and validation
+                const phoneInput = document.getElementById('customer-phone');
+                phoneInput.addEventListener('input', (e) => {
+                    this.formatPhoneNumber(e.target);
+                    this.validatePhone(e.target.value);
+                });
+
+                phoneInput.addEventListener('paste', (e) => {
+                    setTimeout(() => {
+                        this.formatPhoneNumber(e.target);
+                        this.validatePhone(e.target.value);
+                    }, 10);
+                });
+
+                // Email validation
+                const emailInput = document.getElementById('customer-email');
+                emailInput.addEventListener('input', (e) => {
+                    this.validateEmail(e.target.value);
+                });
+
+                // First name validation
+                const firstNameInput = document.getElementById('customer-first-name');
+                firstNameInput.addEventListener('input', (e) => {
+                    this.validateName(e.target.value, 'first-name-indicator');
+                });
+
+                // Last name validation
+                const lastNameInput = document.getElementById('customer-last-name');
+                lastNameInput.addEventListener('input', (e) => {
+                    this.validateName(e.target.value, 'last-name-indicator');
+                });
+
+                // File validation
+                const fileInput = document.getElementById('file-input');
+                fileInput.addEventListener('change', (e) => {
+                    this.validateFile(e.target.files[0]);
+                });
+
+                // Check form validity on any input change
+                const form = document.getElementById('order-form');
+                form.addEventListener('input', () => {
+                    this.checkFormValidity();
+                });
+            }
+
+            formatPhoneNumber(input) {
+                let value = input.value.replace(/\D/g, ''); // Remove all non-digits
+                
+                // Limit to 10 digits
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
+                }
+                
+                // Format as (XXX) XXX-XXXX
+                if (value.length >= 6) {
+                    value = `(${value.substring(0, 3)}) ${value.substring(3, 6)}-${value.substring(6)}`;
+                } else if (value.length >= 3) {
+                    value = `(${value.substring(0, 3)}) ${value.substring(3)}`;
+                } else if (value.length > 0) {
+                    value = `(${value}`;
+                }
+                
+                input.value = value;
+            }
+
+            validatePhone(phone) {
+                const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
+                const isValid = phoneRegex.test(phone);
+                const indicator = document.getElementById('phone-indicator');
+                const message = document.getElementById('phone-message');
+                
+                if (phone.length === 0) {
+                    indicator.textContent = '';
+                    indicator.className = 'validation-indicator';
+                    message.textContent = '';
+                    message.className = 'validation-message';
+                } else if (isValid) {
+                    indicator.textContent = '✓';
+                    indicator.className = 'validation-indicator valid';
+                    message.textContent = 'Valid phone number';
+                    message.className = 'validation-message success';
+                } else {
+                    indicator.textContent = '✗';
+                    indicator.className = 'validation-indicator invalid';
+                    message.textContent = 'Please enter a valid phone number';
+                    message.className = 'validation-message error';
+                }
+                
+                return isValid;
+            }
+
+            validateEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const isValid = emailRegex.test(email);
+                const indicator = document.getElementById('email-indicator');
+                const message = document.getElementById('email-message');
+                
+                if (email.length === 0) {
+                    indicator.textContent = '';
+                    indicator.className = 'validation-indicator';
+                    message.textContent = '';
+                    message.className = 'validation-message';
+                } else if (isValid) {
+                    indicator.textContent = '✓';
+                    indicator.className = 'validation-indicator valid';
+                    message.textContent = 'Valid email address';
+                    message.className = 'validation-message success';
+                } else {
+                    indicator.textContent = '✗';
+                    indicator.className = 'validation-indicator invalid';
+                    message.textContent = 'Please enter a valid email address';
+                    message.className = 'validation-message error';
+                }
+                
+                return isValid;
+            }
+
+            validateName(name, indicatorId) {
+                const isValid = name.trim().length > 0;
+                const indicator = document.getElementById(indicatorId);
+                
+                if (name.length === 0) {
+                    indicator.textContent = '';
+                    indicator.className = 'validation-indicator';
+                } else if (isValid) {
+                    indicator.textContent = '✓';
+                    indicator.className = 'validation-indicator valid';
+                }
+                
+                return isValid;
+            }
+
+            validateFile(file) {
+                const allowedTypes = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'image/jpeg',
+                    'image/jpg',
+                    'image/png',
+                    'image/gif'
+                ];
+                
+                const maxSize = 25 * 1024 * 1024; // 25MB
+                
+                if (!file) {
+                    this.showFileError('Please select a file');
+                    return false;
+                }
+                
+                if (!allowedTypes.includes(file.type)) {
+                    this.showFileError('File type not supported. Please upload PDF, Word document, or image (JPG, PNG, GIF)');
+                    return false;
+                }
+                
+                if (file.size > maxSize) {
+                    this.showFileError('File size too large. Maximum size is 25MB');
+                    return false;
+                }
+                
+                this.clearFileError();
+                return true;
+            }
+
+            showFileError(message) {
+                const fileUploadArea = document.getElementById('file-upload-area');
+                let errorDiv = document.getElementById('file-error');
+                
+                if (!errorDiv) {
+                    errorDiv = document.createElement('div');
+                    errorDiv.id = 'file-error';
+                    errorDiv.style.color = '#EF4444';
+                    errorDiv.style.fontSize = '12px';
+                    errorDiv.style.marginTop = '5px';
+                    fileUploadArea.appendChild(errorDiv);
+                }
+                
+                errorDiv.textContent = message;
+                fileUploadArea.style.borderColor = '#EF4444';
+            }
+
+            clearFileError() {
+                const errorDiv = document.getElementById('file-error');
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+                
+                const fileUploadArea = document.getElementById('file-upload-area');
+                fileUploadArea.style.borderColor = '#ccc';
+            }
+
+            checkFormValidity() {
+                const phone = document.getElementById('customer-phone').value;
+                const email = document.getElementById('customer-email').value;
+                const firstName = document.getElementById('customer-first-name').value;
+                const lastName = document.getElementById('customer-last-name').value;
+                const file = document.getElementById('file-input').files[0];
+                
+                const isPhoneValid = this.validatePhone(phone);
+                const isEmailValid = this.validateEmail(email);
+                const isFirstNameValid = this.validateName(firstName, 'first-name-indicator');
+                const isLastNameValid = this.validateName(lastName, 'last-name-indicator');
+                const isFileValid = this.validateFile(file);
+                
+                const submitButton = document.getElementById('submit-button');
+                const isFormValid = isPhoneValid && isEmailValid && isFirstNameValid && isLastNameValid && isFileValid;
+                
+                submitButton.disabled = !isFormValid;
+                
+                return isFormValid;
             }
 
             setupEventListeners() {
@@ -639,32 +935,21 @@
             handleFileSelect(file) {
                 if (!file) return;
 
-                // Validate file type
-                const allowedTypes = [
-                    'application/pdf',
-                    'application/msword',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                    'image/jpeg',
-                    'image/jpg',
-                    'image/png',
-                    'image/gif'
-                ];
-
-                if (!allowedTypes.includes(file.type)) {
-                    this.showAlert('Invalid file type. Please select a PDF, Word document, or image file.', 'error');
-                    return;
+                // Use the new validation system
+                const isValid = this.validateFile(file);
+                
+                if (isValid) {
+                    // Display file info
+                    document.getElementById('file-name').textContent = file.name;
+                    document.getElementById('file-size').textContent = this.formatFileSize(file.size);
+                    document.getElementById('file-info').style.display = 'block';
+                } else {
+                    // Clear file info if invalid
+                    document.getElementById('file-info').style.display = 'none';
                 }
-
-                // Validate file size (25MB)
-                if (file.size > 25 * 1024 * 1024) {
-                    this.showAlert('File size too large. Maximum size is 25MB.', 'error');
-                    return;
-                }
-
-                // Display file info
-                document.getElementById('file-name').textContent = file.name;
-                document.getElementById('file-size').textContent = this.formatFileSize(file.size);
-                document.getElementById('file-info').style.display = 'block';
+                
+                // Check overall form validity
+                this.checkFormValidity();
             }
 
             formatFileSize(bytes) {
@@ -740,6 +1025,12 @@
             }
 
             async submitOrder() {
+                // Check if form is valid before proceeding
+                if (!this.checkFormValidity()) {
+                    this.showAlert('Please fix all validation errors before submitting.', 'error');
+                    return;
+                }
+
                 const formData = new FormData();
                 const form = document.getElementById('order-form');
                 
@@ -755,6 +1046,12 @@
                     } else if (element.value) {
                         formData.append(element.name, element.value);
                     }
+                }
+
+                // Debug: Log form data
+                console.log('Form data being sent:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
                 }
 
                 // Add calculated price
@@ -818,6 +1115,9 @@
                         orderData.file_size = fileInfo.size;
                     }
 
+                    // Debug: Log final order data
+                    console.log('Final order data being sent to backend:', orderData);
+
                     const orderResponse = await fetch('/api/orders', {
                         method: 'POST',
                         headers: {
@@ -831,11 +1131,23 @@
                         this.showConfirmation(orderResult, orderData);
                     } else {
                         const errorData = await orderResponse.json();
+                        console.error('Backend error response:', errorData);
+                        
+                        // Show specific validation errors if available
+                        if (errorData.errors && errorData.errors.length > 0) {
+                            const errorMessages = errorData.errors.map(err => err.msg).join(', ');
+                            this.showAlert(`Validation errors: ${errorMessages}`, 'error');
+                        } else {
+                            this.showAlert(errorData.message || 'Order submission failed', 'error');
+                        }
                         throw new Error(errorData.message || 'Order submission failed');
                     }
                 } catch (error) {
                     console.error('Order submission failed:', error);
-                    this.showAlert('Order submission failed. Please try again.', 'error');
+                    // Don't show generic error if we already showed a specific one
+                    if (!error.message.includes('Validation errors:')) {
+                        this.showAlert('Order submission failed. Please try again.', 'error');
+                    }
                 }
             }
 
@@ -926,14 +1238,25 @@
 
                 if (!this.settings || !this.settings.pickup_settings) {
                     console.log('No pickup settings available, initializing flatpickr without restrictions');
+                    
+                    // Calculate default date (24 hours from now)
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(9, 0, 0, 0); // Default to 9:00 AM
+                    
                     // Initialize flatpickr without restrictions
-                    flatpickr(datetimeInput, {
+                    const fpInstance = flatpickr(datetimeInput, {
                         enableTime: true,
-                        dateFormat: "Y-m-d H:i",
+                        dateFormat: "n/j/Y h:i K", // 12-hour format
                         time_24hr: false,
                         minuteIncrement: 30,
-                        minDate: "today"
+                        minDate: "today",
+                        defaultDate: tomorrow
                     });
+                    
+                    // Set the default value
+                    datetimeInput.value = fpInstance.formatDate(tomorrow, "n/j/Y h:i K");
+                    console.log('Default datetime set (no settings):', datetimeInput.value);
                     return;
                 }
 
@@ -954,6 +1277,9 @@
                 
                 // Initialize flatpickr with pickup restrictions
 
+                // Calculate default date (24 hours from now, respecting restrictions)
+                const defaultDateTime = this.calculateDefaultDateTime(pickupSettings);
+
                 // Initialize flatpickr with restrictions
                 const fpInstance = flatpickr(datetimeInput, {
                     enableTime: true,
@@ -963,6 +1289,7 @@
                     minTime: minTime,
                     maxTime: maxTime,
                     minDate: "today",
+                    defaultDate: defaultDateTime,
                     disable: [
                         function(date) {
                             // Disable specific days of the week
@@ -985,7 +1312,59 @@
                     }
                 });
 
+                // Set the default value in the input field
+                if (defaultDateTime) {
+                    datetimeInput.value = fpInstance.formatDate(defaultDateTime, "n/j/Y h:i K");
+                    console.log('Default datetime set:', datetimeInput.value);
+                }
+
                 // Flatpickr initialized with pickup restrictions
+            }
+
+            calculateDefaultDateTime(pickupSettings) {
+                // Start from 24 hours from now
+                const now = new Date();
+                const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+                
+                // Get pickup days settings
+                const pickupDays = pickupSettings.pickup_days || {};
+                const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                
+                // Get time settings
+                const minTime = pickupSettings.pickup_start_time || '09:00';
+                const [minHour, minMinute] = minTime.split(':').map(Number);
+                
+                // Get unavailable dates
+                const unavailableDates = pickupSettings.unavailable_dates || [];
+                const unavailableDateStrings = unavailableDates.map(dateStr => dateStr.split('T')[0]); // Get YYYY-MM-DD part
+                
+                // Find the next available date
+                let checkDate = new Date(tomorrow);
+                let attempts = 0;
+                const maxAttempts = 14; // Don't search more than 2 weeks ahead
+                
+                while (attempts < maxAttempts) {
+                    const dayOfWeek = dayNames[checkDate.getDay()];
+                    const dateString = checkDate.toISOString().split('T')[0];
+                    
+                    // Check if this day is available and not in unavailable dates
+                    if (pickupDays[dayOfWeek] !== false && !unavailableDateStrings.includes(dateString)) {
+                        // Set the time to the minimum pickup time
+                        checkDate.setHours(minHour, minMinute, 0, 0);
+                        console.log('Default datetime calculated:', checkDate);
+                        return checkDate;
+                    }
+                    
+                    // Move to next day
+                    checkDate.setDate(checkDate.getDate() + 1);
+                    attempts++;
+                }
+                
+                // Fallback: if no available date found, use tomorrow at minimum time
+                const fallbackDate = new Date(tomorrow);
+                fallbackDate.setHours(minHour, minMinute, 0, 0);
+                console.log('Fallback datetime used:', fallbackDate);
+                return fallbackDate;
             }
         }
 
@@ -995,11 +1374,109 @@
             document.getElementById('order-form').reset();
             document.getElementById('file-info').style.display = 'none';
             document.getElementById('price-estimate').style.display = 'none';
+            
+            // Reset validation state
+            resetFormValidation();
+            
+            // Re-initialize the form with new default date/time
+            if (window.orderFormInstance) {
+                window.orderFormInstance.loadSettingsAndInitializeFlatpickr();
+            }
+        }
+
+        function resetFormValidation() {
+            // Reset phone validation
+            const phoneInput = document.getElementById('customer-phone');
+            const phoneIndicator = document.getElementById('phone-indicator');
+            const phoneMessage = document.getElementById('phone-message');
+            
+            if (phoneInput) {
+                phoneInput.classList.remove('valid', 'invalid');
+                phoneInput.value = '';
+            }
+            if (phoneIndicator) {
+                phoneIndicator.textContent = '';
+            }
+            if (phoneMessage) {
+                phoneMessage.textContent = '';
+            }
+            
+            // Reset email validation
+            const emailInput = document.getElementById('customer-email');
+            const emailIndicator = document.getElementById('email-indicator');
+            const emailMessage = document.getElementById('email-message');
+            
+            if (emailInput) {
+                emailInput.classList.remove('valid', 'invalid');
+                emailInput.value = '';
+            }
+            if (emailIndicator) {
+                emailIndicator.textContent = '';
+            }
+            if (emailMessage) {
+                emailMessage.textContent = '';
+            }
+            
+            // Reset first name validation
+            const firstNameInput = document.getElementById('customer-first-name');
+            const firstNameIndicator = document.getElementById('first-name-indicator');
+            
+            if (firstNameInput) {
+                firstNameInput.classList.remove('valid', 'invalid');
+                firstNameInput.value = '';
+            }
+            if (firstNameIndicator) {
+                firstNameIndicator.textContent = '';
+            }
+            
+            // Reset last name validation
+            const lastNameInput = document.getElementById('customer-last-name');
+            const lastNameIndicator = document.getElementById('last-name-indicator');
+            
+            if (lastNameInput) {
+                lastNameInput.classList.remove('valid', 'invalid');
+                lastNameInput.value = '';
+            }
+            if (lastNameIndicator) {
+                lastNameIndicator.textContent = '';
+            }
+            
+            // Reset file validation
+            const fileInput = document.getElementById('file-upload');
+            const fileError = document.getElementById('file-error');
+            
+            if (fileInput) {
+                fileInput.value = '';
+            }
+            if (fileError) {
+                fileError.textContent = '';
+                fileError.style.display = 'none';
+            }
+            
+            // Reset submit button
+            const submitButton = document.getElementById('submit-button');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.classList.add('disabled');
+            }
+            
+            // Reset dropdowns to defaults
+            document.getElementById('copies').value = '1';
+            document.getElementById('paper-size').value = 'letter';
+            document.getElementById('paper-type').value = 'standard';
+            document.getElementById('color-mode').value = 'black_white';
+            
+            // Calculate price with default values
+            if (window.orderFormInstance) {
+                setTimeout(() => {
+                    window.orderFormInstance.calculatePrice();
+                }, 100);
+            }
         }
 
         // Initialize the order form
         document.addEventListener('DOMContentLoaded', () => {
-            new OrderForm();
+            window.orderFormInstance = new OrderForm();
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
