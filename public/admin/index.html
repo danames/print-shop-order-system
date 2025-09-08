@@ -661,6 +661,45 @@
             background-color: #3b82f6;
             color: white;
         }
+        
+        .unavailable-dates-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .unavailable-date-chip {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 16px;
+            padding: 4px 8px 4px 12px;
+            font-size: 14px;
+            color: #374151;
+        }
+        
+        .unavailable-date-chip .remove-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 6px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .unavailable-date-chip .remove-btn:hover {
+            background-color: #ef4444;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -883,19 +922,60 @@
                             <h3>Status Colors</h3>
                             <div class="color-picker">
                                 <label>Received:</label>
-                                <input type="color" id="color-received" value="#3B82F6">
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <div>
+                                        <label style="font-size: 12px; color: #666;">Background:</label>
+                                        <input type="color" id="color-received-bg" value="#3B82F6">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 12px; color: #666;">Text:</label>
+                                        <input type="color" id="color-received-text" value="#1E40AF">
+                                    </div>
+                                </div>
                             </div>
                             <div class="color-picker">
                                 <label>Paid:</label>
-                                <input type="color" id="color-paid" value="#10B981">
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <div>
+                                        <label style="font-size: 12px; color: #666;">Background:</label>
+                                        <input type="color" id="color-paid-bg" value="#10B981">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 12px; color: #666;">Text:</label>
+                                        <input type="color" id="color-paid-text" value="#065F46">
+                                    </div>
+                                </div>
                             </div>
                             <div class="color-picker">
                                 <label>In Progress:</label>
-                                <input type="color" id="color-in_progress" value="#F59E0B">
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <div>
+                                        <label style="font-size: 12px; color: #666;">Background:</label>
+                                        <input type="color" id="color-in_progress-bg" value="#F59E0B">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 12px; color: #666;">Text:</label>
+                                        <input type="color" id="color-in_progress-text" value="#92400E">
+                                    </div>
+                                </div>
                             </div>
                             <div class="color-picker">
                                 <label>Ready for Pickup:</label>
-                                <input type="color" id="color-ready_for_pickup" value="#FCD34D">
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <div>
+                                        <label style="font-size: 12px; color: #666;">Background:</label>
+                                        <input type="color" id="color-ready_for_pickup-bg" value="#FCD34D">
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 12px; color: #666;">Text:</label>
+                                        <input type="color" id="color-ready_for_pickup-text" value="#92400E">
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <button type="button" class="btn btn-secondary" onclick="resetToDefaultColors()">
+                                    Reset to Default Colors
+                                </button>
                             </div>
                         </div>
 
@@ -949,6 +1029,16 @@
                                     <option value="30">30 Minutes</option>
                                     <option value="60">Hourly</option>
                                 </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Unavailable Dates:</label>
+                                <button type="button" class="btn btn-secondary" onclick="openUnavailableDatesModal()" style="margin-bottom: 10px;">
+                                    Add Unavailable Date
+                                </button>
+                                <div id="unavailable-dates-chips" class="unavailable-dates-container">
+                                    <!-- Date chips will be populated here -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1273,6 +1363,7 @@
                         <td>${order.customer_email}</td>
                         <td>
                             <span class="status-badge status-${order.status} clickable-status" 
+                                  data-status="${order.status}"
                                   onclick="showStatusDropdown(${order.id}, '${order.status}')" 
                                   title="Click to change status">
                                 ${this.formatStatusText(order.status)}
@@ -1306,6 +1397,9 @@
                         </tbody>
                     </table>
                 `;
+                
+                // Apply color settings to the newly rendered order table
+                this.updateOrderTableColors();
             }
 
             updateStats() {
@@ -1317,6 +1411,72 @@
                 document.getElementById('total-orders').textContent = totalOrders;
                 document.getElementById('active-orders').textContent = activeOrders;
                 document.getElementById('ready-orders').textContent = readyOrders;
+            }
+
+            applyColorSettings() {
+                if (!this.settings.status_colors) return;
+
+                const colors = this.settings.status_colors;
+                
+                // Apply colors to status badges in filter section
+                const statusBadges = {
+                    'status-received': colors.received,
+                    'status-paid': colors.paid,
+                    'status-in_progress': colors.in_progress,
+                    'status-ready_for_pickup': colors.ready_for_pickup
+                };
+
+                Object.entries(statusBadges).forEach(([id, colorData]) => {
+                    const badge = document.querySelector(`#${id} + .status-badge`);
+                    if (badge) {
+                        // Handle both old format (string) and new format (object)
+                        if (typeof colorData === 'string') {
+                            badge.style.backgroundColor = colorData;
+                            badge.style.color = this.getContrastColor(colorData);
+                        } else if (colorData && colorData.background) {
+                            badge.style.backgroundColor = colorData.background;
+                            badge.style.color = colorData.text;
+                        }
+                    }
+                });
+
+                // Apply colors to order table status chips
+                this.updateOrderTableColors();
+            }
+
+            getContrastColor(hexColor) {
+                // Convert hex to RGB
+                const r = parseInt(hexColor.slice(1, 3), 16);
+                const g = parseInt(hexColor.slice(3, 5), 16);
+                const b = parseInt(hexColor.slice(5, 7), 16);
+                
+                // Calculate luminance
+                const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                
+                // Return black for light colors, white for dark colors
+                return luminance > 0.5 ? '#000000' : '#ffffff';
+            }
+
+            updateOrderTableColors() {
+                if (!this.settings.status_colors) return;
+
+                const colors = this.settings.status_colors;
+                
+                // Update all status badges in the orders table
+                const statusBadges = document.querySelectorAll('.status-badge');
+                statusBadges.forEach(badge => {
+                    const status = badge.getAttribute('data-status');
+                    if (colors[status]) {
+                        // Handle both old format (string) and new format (object)
+                        if (typeof colors[status] === 'string') {
+                            badge.style.backgroundColor = colors[status];
+                            badge.style.color = this.getContrastColor(colors[status]);
+                        } else if (colors[status] && colors[status].background) {
+                            badge.style.backgroundColor = colors[status].background;
+                            badge.style.color = colors[status].text;
+                        }
+                    }
+                });
             }
 
             filterOrders(searchTerm) {
@@ -1377,10 +1537,39 @@
                 document.getElementById('rotation-seconds').value = this.settings.page_rotation_seconds || 10;
                 
                 if (this.settings.status_colors) {
-                    document.getElementById('color-received').value = this.settings.status_colors.received || '#3B82F6';
-                    document.getElementById('color-paid').value = this.settings.status_colors.paid || '#10B981';
-                    document.getElementById('color-in_progress').value = this.settings.status_colors.in_progress || '#F59E0B';
-                    document.getElementById('color-ready_for_pickup').value = this.settings.status_colors.ready_for_pickup || '#FCD34D';
+                    // Handle both old format (just hex strings) and new format (objects with background/text)
+                    const getBackgroundColor = (color) => {
+                        if (typeof color === 'string') {
+                            return color; // Old format
+                        } else if (color && color.background) {
+                            return color.background; // New format
+                        }
+                        return '#3B82F6'; // Default fallback
+                    };
+
+                    const getTextColor = (color) => {
+                        if (typeof color === 'string') {
+                            return this.getContrastColor(color); // Old format - calculate contrast
+                        } else if (color && color.text) {
+                            return color.text; // New format
+                        }
+                        return '#000000'; // Default fallback
+                    };
+
+                    // Set background colors
+                    document.getElementById('color-received-bg').value = getBackgroundColor(this.settings.status_colors.received);
+                    document.getElementById('color-paid-bg').value = getBackgroundColor(this.settings.status_colors.paid);
+                    document.getElementById('color-in_progress-bg').value = getBackgroundColor(this.settings.status_colors.in_progress);
+                    document.getElementById('color-ready_for_pickup-bg').value = getBackgroundColor(this.settings.status_colors.ready_for_pickup);
+
+                    // Set text colors
+                    document.getElementById('color-received-text').value = getTextColor(this.settings.status_colors.received);
+                    document.getElementById('color-paid-text').value = getTextColor(this.settings.status_colors.paid);
+                    document.getElementById('color-in_progress-text').value = getTextColor(this.settings.status_colors.in_progress);
+                    document.getElementById('color-ready_for_pickup-text').value = getTextColor(this.settings.status_colors.ready_for_pickup);
+                    
+                    // Apply colors to the page
+                    this.applyColorSettings();
                 }
 
         // Populate pickup settings
@@ -1411,6 +1600,9 @@
             
             // Initialize flatpickr for time inputs in settings (no restrictions)
             this.initializeSettingsTimePickers();
+            
+            // Update unavailable dates display
+            updateUnavailableDatesDisplay();
         }
             }
 
@@ -1419,10 +1611,22 @@
                     display_mode: document.getElementById('display-mode').value,
                     page_rotation_seconds: parseInt(document.getElementById('rotation-seconds').value),
                     status_colors: {
-                        received: document.getElementById('color-received').value,
-                        paid: document.getElementById('color-paid').value,
-                        in_progress: document.getElementById('color-in_progress').value,
-                        ready_for_pickup: document.getElementById('color-ready_for_pickup').value
+                        received: {
+                            background: document.getElementById('color-received-bg').value,
+                            text: document.getElementById('color-received-text').value
+                        },
+                        paid: {
+                            background: document.getElementById('color-paid-bg').value,
+                            text: document.getElementById('color-paid-text').value
+                        },
+                        in_progress: {
+                            background: document.getElementById('color-in_progress-bg').value,
+                            text: document.getElementById('color-in_progress-text').value
+                        },
+                        ready_for_pickup: {
+                            background: document.getElementById('color-ready_for_pickup-bg').value,
+                            text: document.getElementById('color-ready_for_pickup-text').value
+                        }
                     },
             pickup_settings: {
                 pickup_start_time: (() => {
@@ -1460,7 +1664,8 @@
                     thursday: document.getElementById('day-thursday').checked,
                     friday: document.getElementById('day-friday').checked,
                     saturday: document.getElementById('day-saturday').checked
-                }
+                },
+                unavailable_dates: this.settings.pickup_settings.unavailable_dates || []
             }
                 };
 
@@ -1487,6 +1692,9 @@
                         
                         // Reload settings from server to ensure local object is updated
                         await this.loadSettings();
+                        
+                        // Apply color settings to the current page
+                        this.applyColorSettings();
                         
                         // Update all existing flatpickr instances with new settings
                         this.updateFlatpickrInstances();
@@ -2049,13 +2257,23 @@
                 this.flatpickrInstances.forEach((instance, index) => {
                     if (instance && typeof instance.set === 'function') {
                         try {
-                            instance.set('disable', [
-                                function(date) {
-                                    // Disable specific days of the week
-                                    const dayOfWeek = date.getDay();
-                                    return disabledDays.includes(dayOfWeek);
+                        instance.set('disable', [
+                            function(date) {
+                                // Disable specific days of the week
+                                const dayOfWeek = date.getDay();
+                                if (disabledDays.includes(dayOfWeek)) {
+                                    return true;
                                 }
-                            ]);
+                                
+                                // Disable unavailable dates
+                                const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                                if (pickupSettings.unavailable_dates && pickupSettings.unavailable_dates.includes(dateStr)) {
+                                    return true;
+                                }
+                                
+                                return false;
+                            }
+                        ]);
                             instance.set('minuteIncrement', parseInt(pickupSettings.time_increment));
                             instance.set('minTime', pickupSettings.pickup_start_time);
                             instance.set('maxTime', pickupSettings.pickup_end_time);
@@ -2204,6 +2422,31 @@
 
         function saveSettings() {
             adminPanel.saveSettings();
+        }
+
+        function resetToDefaultColors() {
+            // Default colors from the CSS
+            const defaultColors = {
+                received: { background: '#DBEAFE', text: '#1E40AF' },
+                paid: { background: '#D1FAE5', text: '#065F46' },
+                in_progress: { background: '#FEF3C7', text: '#92400E' },
+                ready_for_pickup: { background: '#FEF3C7', text: '#92400E' }
+            };
+
+            // Set the background color picker values to defaults
+            document.getElementById('color-received-bg').value = defaultColors.received.background;
+            document.getElementById('color-paid-bg').value = defaultColors.paid.background;
+            document.getElementById('color-in_progress-bg').value = defaultColors.in_progress.background;
+            document.getElementById('color-ready_for_pickup-bg').value = defaultColors.ready_for_pickup.background;
+
+            // Set the text color picker values to defaults
+            document.getElementById('color-received-text').value = defaultColors.received.text;
+            document.getElementById('color-paid-text').value = defaultColors.paid.text;
+            document.getElementById('color-in_progress-text').value = defaultColors.in_progress.text;
+            document.getElementById('color-ready_for_pickup-text').value = defaultColors.ready_for_pickup.text;
+
+            // Show confirmation message
+            adminPanel.showAlert('Colors reset to defaults! Click "Save Settings" to apply.', 'info');
         }
 
         function exportOrders() {
@@ -2513,7 +2756,17 @@
                     function(date) {
                         // Disable specific days of the week
                         const dayOfWeek = date.getDay();
-                        return disabledDays.includes(dayOfWeek);
+                        if (disabledDays.includes(dayOfWeek)) {
+                            return true;
+                        }
+                        
+                        // Disable unavailable dates
+                        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                        if (pickupSettings.unavailable_dates && pickupSettings.unavailable_dates.includes(dateStr)) {
+                            return true;
+                        }
+                        
+                        return false;
                     }
                 ],
                 defaultDate: datetimeInput.value || null,
@@ -2572,7 +2825,17 @@
                     function(date) {
                         // Disable specific days of the week
                         const dayOfWeek = date.getDay();
-                        return disabledDays.includes(dayOfWeek);
+                        if (disabledDays.includes(dayOfWeek)) {
+                            return true;
+                        }
+                        
+                        // Disable unavailable dates
+                        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                        if (pickupSettings.unavailable_dates && pickupSettings.unavailable_dates.includes(dateStr)) {
+                            return true;
+                        }
+                        
+                        return false;
                     }
                 ],
                 defaultDate: datetimeInput.value || null,
@@ -2586,7 +2849,127 @@
             
             console.log('=== EDIT MODAL FLATPICKR RESTRICTIONS APPLIED ===');
         }
+        
+        // Unavailable Dates Functions
+        function openUnavailableDatesModal() {
+            const modal = document.getElementById('unavailable-dates-modal');
+            if (!modal) {
+                console.error('Unavailable dates modal not found');
+                return;
+            }
+            modal.style.display = 'flex';
+            
+            // Initialize flatpickr for date selection (date only, no time)
+            const dateInput = document.getElementById('unavailable-date-input');
+            if (dateInput && !dateInput._flatpickr) {
+                flatpickr(dateInput, {
+                    enableTime: false,
+                    dateFormat: "Y-m-d", // Store in YYYY-MM-DD format
+                    minDate: "today", // Can't select past dates
+                    onChange: function(selectedDates, dateStr, instance) {
+                        // Auto-close modal and add date when selected
+                        if (dateStr) {
+                            addUnavailableDateFromString(dateStr);
+                            closeUnavailableDatesModal();
+                        }
+                    }
+                });
+            }
+        }
+        
+        function closeUnavailableDatesModal() {
+            const modal = document.getElementById('unavailable-dates-modal');
+            if (!modal) {
+                console.error('Unavailable dates modal not found');
+                return;
+            }
+            modal.style.display = 'none';
+            
+            // Clear the input
+            const dateInput = document.getElementById('unavailable-date-input');
+            if (dateInput) {
+                dateInput.value = '';
+            }
+        }
+        
+        function addUnavailableDate() {
+            const dateInput = document.getElementById('unavailable-date-input');
+            const dateStr = dateInput.value;
+            if (dateStr) {
+                addUnavailableDateFromString(dateStr);
+                closeUnavailableDatesModal();
+            }
+        }
+        
+        function addUnavailableDateFromString(dateStr) {
+            // Add to settings if not already present
+            if (!adminPanel.settings.pickup_settings.unavailable_dates) {
+                adminPanel.settings.pickup_settings.unavailable_dates = [];
+            }
+            
+            if (!adminPanel.settings.pickup_settings.unavailable_dates.includes(dateStr)) {
+                adminPanel.settings.pickup_settings.unavailable_dates.push(dateStr);
+                updateUnavailableDatesDisplay();
+            }
+        }
+        
+        function removeUnavailableDate(dateStr) {
+            if (adminPanel.settings.pickup_settings.unavailable_dates) {
+                const index = adminPanel.settings.pickup_settings.unavailable_dates.indexOf(dateStr);
+                if (index > -1) {
+                    adminPanel.settings.pickup_settings.unavailable_dates.splice(index, 1);
+                    updateUnavailableDatesDisplay();
+                }
+            }
+        }
+        
+        function updateUnavailableDatesDisplay() {
+            const container = document.getElementById('unavailable-dates-chips');
+            if (!container) {
+                console.log('Unavailable dates chips container not found');
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            if (adminPanel.settings.pickup_settings.unavailable_dates) {
+                adminPanel.settings.pickup_settings.unavailable_dates.forEach(dateStr => {
+                    const chip = document.createElement('div');
+                    chip.className = 'unavailable-date-chip';
+                    
+                    // Format date for display (convert YYYY-MM-DD to M/D/YY)
+                    // Parse date string manually to avoid timezone issues
+                    const [year, month, day] = dateStr.split('-');
+                    const displayDate = `${parseInt(month)}/${parseInt(day)}/${year.slice(-2)}`;
+                    
+                    chip.innerHTML = `
+                        ${displayDate}
+                        <button class="remove-btn" onclick="removeUnavailableDate('${dateStr}')" title="Remove date">&times;</button>
+                    `;
+                    
+                    container.appendChild(chip);
+                });
+            }
+        }
     </script>
+    
+    <!-- Unavailable Dates Modal -->
+    <div id="unavailable-dates-modal" class="date-picker-overlay" style="display: none;">
+        <div class="date-picker-modal">
+            <div class="date-picker-header">
+                <h3>Select Unavailable Date</h3>
+                <button onclick="closeUnavailableDatesModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label for="unavailable-date-input">Select Date:</label>
+                <input type="text" id="unavailable-date-input" placeholder="Select date" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+            </div>
+            <div class="date-picker-actions">
+                <button class="btn btn-secondary" onclick="closeUnavailableDatesModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </body>
 </html>

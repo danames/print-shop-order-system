@@ -967,7 +967,17 @@
                         function(date) {
                             // Disable specific days of the week
                             const dayOfWeek = date.getDay();
-                            return disabledDays.includes(dayOfWeek);
+                            if (disabledDays.includes(dayOfWeek)) {
+                                return true;
+                            }
+                            
+                            // Disable unavailable dates
+                            const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+                            if (pickupSettings.unavailable_dates && pickupSettings.unavailable_dates.includes(dateStr)) {
+                                return true;
+                            }
+                            
+                            return false;
                         }
                     ],
                     onChange: function(selectedDates, dateStr, instance) {

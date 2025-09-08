@@ -173,7 +173,8 @@ const insertDefaultData = () => {
             friday: true,
             saturday: true
           },
-          time_increment: '30' // 15, 30, or 60 minutes
+          time_increment: '30', // 15, 30, or 60 minutes
+          unavailable_dates: [] // Array of specific dates when store is closed (YYYY-MM-DD format)
         })]
     ];
 
