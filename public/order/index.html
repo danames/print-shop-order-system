@@ -601,7 +601,7 @@
                     <div class="order-details" id="confirmation-details">
                         <!-- Order details will be populated here -->
                     </div>
-                    <p>Thank you for choosing Pioneer Party! We will contact you to confirm your order and provide an exact pickup time.</p>
+                    <p>Thank you for choosing The Print Shop at Pioneer Party! We will contact you to confirm your order and provide an exact pickup time.</p>
                     <button class="btn btn-secondary" onclick="submitNewOrder()">Submit Another Order</button>
                 </div>
             </div>
@@ -1190,7 +1190,7 @@
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Preferred Pickup:</span>
-                        <span class="detail-value">${orderData.pickup_date}</span>
+                        <span class="detail-value">${document.getElementById('pickup-datetime').value || 'Not specified'}</span>
                     </div>
                 `;
 
