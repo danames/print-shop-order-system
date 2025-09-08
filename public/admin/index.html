@@ -900,14 +900,14 @@
                         </div>
 
                         <div class="settings-section">
-                            <h3>Pickup Date/Time</h3>
+                            <h3>Pickup Date & Time</h3>
                             <div class="form-group">
                                 <label for="pickup-start-time">Pickup Start Time:</label>
-                                <input type="text" id="pickup-start-time" placeholder="Select start time" value="09:00">
+                                <input type="text" id="pickup-start-time" placeholder="Select start time" value="9:00 AM">
                             </div>
                             <div class="form-group">
                                 <label for="pickup-end-time">Pickup End Time:</label>
-                                <input type="text" id="pickup-end-time" placeholder="Select end time" value="17:00">
+                                <input type="text" id="pickup-end-time" placeholder="Select end time" value="5:00 PM">
                             </div>
                             <div class="form-group">
                                 <label>Available Pickup Days:</label>
@@ -1096,6 +1096,8 @@
                         this.showMainApp();
                         this.loadData();
                     } else {
+                        // Token expired or invalid
+                        localStorage.removeItem('admin_token');
                         this.showLogin();
                     }
                 } catch (error) {
@@ -1208,6 +1210,10 @@
 
                 // Load data for specific tabs
                 if (tabName === 'settings') {
+                    this.loadSettings();
+                } else if (tabName === 'orders') {
+                    // Ensure settings are fresh when switching to orders tab
+                    // This ensures pickup restrictions are up-to-date
                     this.loadSettings();
                 }
             }
@@ -1379,8 +1385,18 @@
 
         // Populate pickup settings
         if (this.settings.pickup_settings) {
-            document.getElementById('pickup-start-time').value = this.settings.pickup_settings.pickup_start_time || '09:00';
-            document.getElementById('pickup-end-time').value = this.settings.pickup_settings.pickup_end_time || '17:00';
+            // Convert 24-hour format to 12-hour format for display
+            const convertTo12Hour = (time24h) => {
+                if (!time24h) return '9:00 AM';
+                const [hours, minutes] = time24h.split(':');
+                const hour24 = parseInt(hours);
+                const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+                const period = hour24 >= 12 ? 'PM' : 'AM';
+                return `${hour12}:${minutes} ${period}`;
+            };
+            
+            document.getElementById('pickup-start-time').value = convertTo12Hour(this.settings.pickup_settings.pickup_start_time);
+            document.getElementById('pickup-end-time').value = convertTo12Hour(this.settings.pickup_settings.pickup_end_time);
             document.getElementById('time-increment').value = this.settings.pickup_settings.time_increment || '30';
             
             if (this.settings.pickup_settings.pickup_days) {
@@ -1409,8 +1425,32 @@
                         ready_for_pickup: document.getElementById('color-ready_for_pickup').value
                     },
             pickup_settings: {
-                pickup_start_time: document.getElementById('pickup-start-time').value,
-                pickup_end_time: document.getElementById('pickup-end-time').value,
+                pickup_start_time: (() => {
+                    // Convert 12-hour format to 24-hour format for backend
+                    const time12h = document.getElementById('pickup-start-time').value;
+                    if (time12h) {
+                        const [time, period] = time12h.split(' ');
+                        const [hours, minutes] = time.split(':');
+                        let hour24 = parseInt(hours);
+                        if (period === 'PM' && hour24 !== 12) hour24 += 12;
+                        if (period === 'AM' && hour24 === 12) hour24 = 0;
+                        return `${hour24.toString().padStart(2, '0')}:${minutes}`;
+                    }
+                    return time12h;
+                })(),
+                pickup_end_time: (() => {
+                    // Convert 12-hour format to 24-hour format for backend
+                    const time12h = document.getElementById('pickup-end-time').value;
+                    if (time12h) {
+                        const [time, period] = time12h.split(' ');
+                        const [hours, minutes] = time.split(':');
+                        let hour24 = parseInt(hours);
+                        if (period === 'PM' && hour24 !== 12) hour24 += 12;
+                        if (period === 'AM' && hour24 === 12) hour24 = 0;
+                        return `${hour24.toString().padStart(2, '0')}:${minutes}`;
+                    }
+                    return time12h;
+                })(),
                 time_increment: document.getElementById('time-increment').value,
                 pickup_days: {
                     sunday: document.getElementById('day-sunday').checked,
@@ -1426,6 +1466,13 @@
 
                 try {
                     const token = localStorage.getItem('admin_token');
+                    
+                    if (!token) {
+                        this.showAlert('Authentication required. Please log in again.', 'error');
+                        this.showLogin();
+                        return;
+                    }
+                    
                     const response = await fetch('/api/settings', {
                         method: 'PUT',
                         headers: {
@@ -1438,8 +1485,21 @@
                     if (response.ok) {
                         this.showAlert('Settings saved successfully!', 'success');
                         
+                        // Reload settings from server to ensure local object is updated
+                        await this.loadSettings();
+                        
                         // Update all existing flatpickr instances with new settings
                         this.updateFlatpickrInstances();
+                        
+                        // Show additional notification that changes are applied
+                        setTimeout(() => {
+                            this.showAlert('Pickup restrictions updated across all forms!', 'info');
+                        }, 1000);
+                    } else if (response.status === 401 || response.status === 403) {
+                        // Token expired or invalid
+                        this.showAlert('Session expired. Please log in again.', 'error');
+                        localStorage.removeItem('admin_token');
+                        this.showLogin();
                     } else {
                         this.showAlert('Failed to save settings', 'error');
                     }
@@ -2014,10 +2074,10 @@
                 flatpickr(startTimeInput, {
                     enableTime: true,
                     noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
+                    dateFormat: "h:i K", // 12-hour format: 9:00 AM
+                    time_24hr: false,
                     minuteIncrement: 15,
-                    defaultDate: startTimeInput.value || "09:00"
+                    defaultDate: startTimeInput.value || "9:00 AM"
                 });
             }
 
@@ -2027,10 +2087,10 @@
                 flatpickr(endTimeInput, {
                     enableTime: true,
                     noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
+                    dateFormat: "h:i K", // 12-hour format: 5:00 PM
+                    time_24hr: false,
                     minuteIncrement: 15,
-                    defaultDate: endTimeInput.value || "17:00"
+                    defaultDate: endTimeInput.value || "5:00 PM"
                 });
             }
         }
@@ -2062,12 +2122,25 @@
                     document.getElementById('customer-phone').value = order.customer_phone;
                     document.getElementById('customer-email').value = order.customer_email;
                     document.getElementById('customer-address').value = order.customer_address;
-                    // Combine date and time for flatpickr
+                    // Combine date and time for flatpickr and format for display
                     let datetimeValue = '';
                     if (order.pickup_date) {
                         datetimeValue = order.pickup_date;
                         if (order.pickup_time) {
                             datetimeValue += ' ' + order.pickup_time;
+                        }
+                        // Convert from database format (YYYY-MM-DD HH:MM) to display format (n/j/Y h:i K)
+                        const dateTime = new Date(datetimeValue);
+                        if (!isNaN(dateTime.getTime())) {
+                            const month = dateTime.getMonth() + 1; // 0-based to 1-based
+                            const day = dateTime.getDate();
+                            const year = dateTime.getFullYear();
+                            const hours = dateTime.getHours();
+                            const minutes = dateTime.getMinutes();
+                            const ampm = hours >= 12 ? 'PM' : 'AM';
+                            const displayHours = hours % 12 || 12; // Convert to 12-hour format
+                            const displayMinutes = minutes.toString().padStart(2, '0');
+                            datetimeValue = `${month}/${day}/${year} ${displayHours}:${displayMinutes} ${ampm}`;
                         }
                     }
                     document.getElementById('pickup-datetime').value = datetimeValue;
@@ -2307,6 +2380,28 @@
             if (existingPicker) {
                 existingPicker.remove();
             }
+            
+            // Format current date/time for display (convert from database format to display format)
+            let defaultDateTimeValue = '';
+            if (currentDate) {
+                defaultDateTimeValue = currentDate;
+                if (currentTime) {
+                    defaultDateTimeValue += ' ' + currentTime;
+                }
+                // Convert from database format (YYYY-MM-DD HH:MM) to display format (n/j/Y h:i K)
+                const dateTime = new Date(defaultDateTimeValue);
+                if (!isNaN(dateTime.getTime())) {
+                    const month = dateTime.getMonth() + 1; // 0-based to 1-based
+                    const day = dateTime.getDate();
+                    const year = dateTime.getFullYear();
+                    const hours = dateTime.getHours();
+                    const minutes = dateTime.getMinutes();
+                    const ampm = hours >= 12 ? 'PM' : 'AM';
+                    const displayHours = hours % 12 || 12; // Convert to 12-hour format
+                    const displayMinutes = minutes.toString().padStart(2, '0');
+                    defaultDateTimeValue = `${month}/${day}/${year} ${displayHours}:${displayMinutes} ${ampm}`;
+                }
+            }
 
             // Create overlay
             const overlay = document.createElement('div');
@@ -2323,7 +2418,7 @@
                 </div>
                 <div style="margin-bottom: 16px;">
                     <label for="pickup-datetime-input">Pickup Date & Time:</label>
-                    <input type="text" id="pickup-datetime-input" placeholder="Select date and time" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
+                    <input type="text" id="pickup-datetime-input" placeholder="Select date and time" value="${defaultDateTimeValue}" style="width: 100%; padding: 8px; margin-top: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
                 </div>
                 <div class="date-picker-actions">
                     <button class="btn btn-secondary" onclick="closeDatePicker()">Cancel</button>
@@ -2409,7 +2504,7 @@
             // Initialize flatpickr with restrictions
             const fpInstance = flatpickr(datetimeInput, {
                 enableTime: true,
-                dateFormat: "Y-m-d H:i",
+                dateFormat: "n/j/Y h:i K", // Format: 9/30/25 3:15 PM
                 time_24hr: false,
                 minuteIncrement: parseInt(pickupSettings.time_increment),
                 minTime: pickupSettings.pickup_start_time,
@@ -2468,7 +2563,7 @@
             // Initialize flatpickr with restrictions
             const fpInstance = flatpickr(datetimeInput, {
                 enableTime: true,
-                dateFormat: "Y-m-d H:i",
+                dateFormat: "n/j/Y h:i K", // Format: 9/30/25 3:15 PM
                 time_24hr: false,
                 minuteIncrement: parseInt(pickupSettings.time_increment),
                 minTime: pickupSettings.pickup_start_time,
