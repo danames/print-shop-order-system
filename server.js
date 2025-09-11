@@ -13,6 +13,7 @@ const { router: authRoutes } = require('./src/backend/routes/auth');
 const orderRoutes = require('./src/backend/routes/orders');
 const settingsRoutes = require('./src/backend/routes/settings');
 const uploadRoutes = require('./src/backend/routes/upload');
+const optionsRoutes = require('./src/backend/routes/options');
 
 // Import database
 const { initDatabase } = require('./src/database/init');
@@ -73,6 +74,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/upload', uploadRoutes);
+
+app.use('/api/options', optionsRoutes);
 
 // Serve React apps
 app.get('/admin', (req, res) => {

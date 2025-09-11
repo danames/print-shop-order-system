@@ -76,17 +76,25 @@ router.get('/verify', (req, res) => {
 
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
+  console.log('=== AUTHENTICATION MIDDLEWARE ===');
+  console.log('URL:', req.url);
+  console.log('Method:', req.method);
+  console.log('Auth Header:', req.headers['authorization']);
+  
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
+    console.log('No token provided');
     return res.status(401).json({ message: 'Access token required' });
   }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
+      console.log('Token verification failed:', err.message);
       return res.status(403).json({ message: 'Invalid or expired token' });
     }
+    console.log('Token verified for user:', user.username);
     req.user = user;
     next();
   });

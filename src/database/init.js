@@ -71,6 +71,49 @@ const createTables = () => {
         username TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      
+      // Paper sizes table
+      `CREATE TABLE IF NOT EXISTS paper_sizes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        display_name TEXT NOT NULL,
+        sort_order INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      
+      // Paper types table
+      `CREATE TABLE IF NOT EXISTS paper_types (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        display_name TEXT NOT NULL,
+        sort_order INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      
+      // Color modes table
+      `CREATE TABLE IF NOT EXISTS color_modes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE NOT NULL,
+        display_name TEXT NOT NULL,
+        sort_order INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )`,
+      
+      // Print combinations table
+      `CREATE TABLE IF NOT EXISTS print_combinations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        paper_size_id INTEGER NOT NULL,
+        paper_type_id INTEGER NOT NULL,
+        color_mode_id INTEGER NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        is_available BOOLEAN DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (paper_size_id) REFERENCES paper_sizes (id),
+        FOREIGN KEY (paper_type_id) REFERENCES paper_types (id),
+        FOREIGN KEY (color_mode_id) REFERENCES color_modes (id),
+        UNIQUE(paper_size_id, paper_type_id, color_mode_id)
       )`
     ];
 
@@ -191,11 +234,172 @@ const insertDefaultData = () => {
           }
           completed++;
           if (completed === defaultSettings.length) {
-            console.log('Database initialization complete');
-            resolve();
+            insertDefaultOptions().then(() => {
+              console.log('Database initialization complete');
+              resolve();
+            }).catch(reject);
           }
         }
       );
+    });
+  });
+};
+
+const insertDefaultOptions = () => {
+  return new Promise((resolve, reject) => {
+    // Insert default paper sizes
+    const paperSizes = [
+      ['letter', 'Letter (8.5" x 11")', 1],
+      ['legal', 'Legal (8.5" x 14")', 2],
+      ['a4', 'A4 (8.27" x 11.69")', 3],
+      ['11x17', '11" x 17"', 4]
+    ];
+
+    // Insert default paper types
+    const paperTypes = [
+      ['standard', 'Standard Paper', 1],
+      ['glossy', 'Glossy Paper', 2],
+      ['matte', 'Matte Paper', 3],
+      ['cardstock', 'Cardstock', 4]
+    ];
+
+    // Insert default color modes
+    const colorModes = [
+      ['black_white', 'Black & White', 1],
+      ['color', 'Color', 2]
+    ];
+
+    let completed = 0;
+    const totalInserts = paperSizes.length + paperTypes.length + colorModes.length;
+
+    // Insert paper sizes
+    paperSizes.forEach(([name, displayName, sortOrder]) => {
+      db.run(
+        `INSERT OR IGNORE INTO paper_sizes (name, display_name, sort_order) VALUES (?, ?, ?)`,
+        [name, displayName, sortOrder],
+        (err) => {
+          if (err) {
+            console.error(`Error inserting paper size ${name}:`, err);
+            reject(err);
+            return;
+          }
+          completed++;
+          if (completed === totalInserts) {
+            insertDefaultCombinations().then(resolve).catch(reject);
+          }
+        }
+      );
+    });
+
+    // Insert paper types
+    paperTypes.forEach(([name, displayName, sortOrder]) => {
+      db.run(
+        `INSERT OR IGNORE INTO paper_types (name, display_name, sort_order) VALUES (?, ?, ?)`,
+        [name, displayName, sortOrder],
+        (err) => {
+          if (err) {
+            console.error(`Error inserting paper type ${name}:`, err);
+            reject(err);
+            return;
+          }
+          completed++;
+          if (completed === totalInserts) {
+            insertDefaultCombinations().then(resolve).catch(reject);
+          }
+        }
+      );
+    });
+
+    // Insert color modes
+    colorModes.forEach(([name, displayName, sortOrder]) => {
+      db.run(
+        `INSERT OR IGNORE INTO color_modes (name, display_name, sort_order) VALUES (?, ?, ?)`,
+        [name, displayName, sortOrder],
+        (err) => {
+          if (err) {
+            console.error(`Error inserting color mode ${name}:`, err);
+            reject(err);
+            return;
+          }
+          completed++;
+          if (completed === totalInserts) {
+            insertDefaultCombinations().then(resolve).catch(reject);
+          }
+        }
+      );
+    });
+  });
+};
+
+const insertDefaultCombinations = () => {
+  return new Promise((resolve, reject) => {
+    // Get all option IDs first
+    db.all(`SELECT id, name FROM paper_sizes ORDER BY sort_order`, (err, paperSizes) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      
+      db.all(`SELECT id, name FROM paper_types ORDER BY sort_order`, (err, paperTypes) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        
+        db.all(`SELECT id, name FROM color_modes ORDER BY sort_order`, (err, colorModes) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          
+          // Create all combinations with default pricing
+          const combinations = [];
+          paperSizes.forEach(size => {
+            paperTypes.forEach(type => {
+              colorModes.forEach(color => {
+                // Calculate price based on old pricing structure
+                let price = 0.10; // Base price
+                
+                // Add paper size cost
+                if (size.name === 'legal') price += 0.02;
+                else if (size.name === 'a4') price += 0.01;
+                else if (size.name === '11x17') price += 0.10;
+                
+                // Add paper type cost
+                if (type.name === 'glossy') price += 0.05;
+                else if (type.name === 'matte') price += 0.03;
+                else if (type.name === 'cardstock') price += 0.10;
+                
+                // Add color cost
+                if (color.name === 'color') price += 0.25;
+                
+                combinations.push([size.id, type.id, color.id, price, 1]);
+              });
+            });
+          });
+          
+          // Insert combinations
+          let completed = 0;
+          combinations.forEach(([sizeId, typeId, colorId, price, available]) => {
+            db.run(
+              `INSERT OR IGNORE INTO print_combinations (paper_size_id, paper_type_id, color_mode_id, price, is_available) VALUES (?, ?, ?, ?, ?)`,
+              [sizeId, typeId, colorId, price, available],
+              (err) => {
+                if (err) {
+                  console.error(`Error inserting combination:`, err);
+                  reject(err);
+                  return;
+                }
+                completed++;
+                if (completed === combinations.length) {
+                  console.log('Default options and combinations inserted');
+                  resolve();
+                }
+              }
+            );
+          });
+        });
+      });
     });
   });
 };

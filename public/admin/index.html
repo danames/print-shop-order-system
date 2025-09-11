@@ -288,6 +288,144 @@
             color: #333;
         }
 
+        /* Options & Prices Styles */
+        .options-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .options-section h4 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #10B981;
+            padding-bottom: 5px;
+        }
+
+        .options-list {
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 5px;
+        }
+
+        .option-item input {
+            margin-right: 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .option-item .option-name {
+            min-width: 120px;
+        }
+
+        .option-item .option-display {
+            min-width: 300px;
+            flex: 1;
+        }
+
+        .option-item .option-sort {
+            min-width: 80px;
+        }
+
+        .add-option {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .add-option input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+
+        .add-option input[placeholder*="Display Name"] {
+            min-width: 300px;
+            flex: 1;
+        }
+
+        .combinations-table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .combinations-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .combinations-table th {
+            background: #10B981;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .combinations-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .combinations-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .combinations-table tr.unavailable {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .combinations-table tr.unavailable input {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .combinations-table input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .combinations-table input[type="checkbox"] {
+            transform: scale(1.2);
+        }
+
+        .availability-status {
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .availability-status.available {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+
+        .availability-status.unavailable {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+
         .color-picker {
             display: flex;
             align-items: center;
@@ -728,6 +866,7 @@
                 <div class="nav-tabs">
                     <button class="nav-tab active" data-tab="orders">Orders</button>
                     <button class="nav-tab" data-tab="settings">Settings</button>
+                    <button class="nav-tab" data-tab="options">Options & Prices</button>
                     <button class="nav-tab" data-tab="export">Export</button>
                     <button class="nav-tab" onclick="logout()">Logout</button>
                 </div>
@@ -1048,6 +1187,76 @@
                     </div>
                 </div>
 
+                <!-- Options & Prices Tab -->
+                <div id="options-tab" class="tab-content">
+                    <div class="settings-section">
+                        <h3>Paper Options Management</h3>
+                        <p>Manage available paper sizes, types, and color modes for the order form.</p>
+                        
+                        <!-- Paper Sizes Section -->
+                        <div class="options-section">
+                            <h4>Paper Sizes</h4>
+                            <div class="options-list" id="paper-sizes-list">
+                                <!-- Paper sizes will be loaded here -->
+                            </div>
+                            <div class="add-option">
+                                <input type="text" id="new-paper-size-display" placeholder="Display Name (e.g., Letter (8.5\" x 11\"))" class="form-input">
+                                <input type="number" id="new-paper-size-sort" placeholder="Sort Order" class="form-input" value="0">
+                                <button class="btn btn-secondary" onclick="addPaperSize()">Add Paper Size</button>
+                            </div>
+                        </div>
+
+                        <!-- Paper Types Section -->
+                        <div class="options-section">
+                            <h4>Paper Types</h4>
+                            <div class="options-list" id="paper-types-list">
+                                <!-- Paper types will be loaded here -->
+                            </div>
+                            <div class="add-option">
+                                <input type="text" id="new-paper-type-display" placeholder="Display Name (e.g., Standard Paper)" class="form-input">
+                                <input type="number" id="new-paper-type-sort" placeholder="Sort Order" class="form-input" value="0">
+                                <button class="btn btn-secondary" onclick="addPaperType()">Add Paper Type</button>
+                            </div>
+                        </div>
+
+                        <!-- Color Modes Section -->
+                        <div class="options-section">
+                            <h4>Color Modes</h4>
+                            <div class="options-list" id="color-modes-list">
+                                <!-- Color modes will be loaded here -->
+                            </div>
+                            <div class="add-option">
+                                <input type="text" id="new-color-mode-display" placeholder="Display Name (e.g., Black & White)" class="form-input">
+                                <input type="number" id="new-color-mode-sort" placeholder="Sort Order" class="form-input" value="0">
+                                <button class="btn btn-secondary" onclick="addColorMode()">Add Color Mode</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Price Combinations</h3>
+                        <p>Set prices and availability for each combination of paper options.</p>
+                        
+                        <div class="combinations-table-container">
+                            <table class="combinations-table" id="combinations-table">
+                                <thead>
+                                    <tr>
+                                        <th>Paper Size</th>
+                                        <th>Paper Type</th>
+                                        <th>Color Mode</th>
+                                        <th>Price ($)</th>
+                                        <th>Available</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="combinations-tbody">
+                                    <!-- Combinations will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Export Tab -->
                 <div id="export-tab" class="tab-content">
                     <div class="settings-section">
@@ -1301,6 +1510,9 @@
                 // Load data for specific tabs
                 if (tabName === 'settings') {
                     this.loadSettings();
+                } else if (tabName === 'options') {
+                    this.loadOptions();
+                    this.loadCombinations();
                 } else if (tabName === 'orders') {
                     // Ensure settings are fresh when switching to orders tab
                     // This ensures pickup restrictions are up-to-date
@@ -2312,6 +2524,220 @@
                 });
             }
         }
+
+        // Options & Prices Management Methods
+        async loadOptions() {
+            try {
+                const token = localStorage.getItem('admin_token');
+                const response = await fetch('/api/options', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const options = await response.json();
+                    this.displayOptions(options);
+                } else {
+                    this.showAlert('Failed to load options', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to load options:', error);
+                this.showAlert('Failed to load options', 'error');
+            }
+        }
+
+        async loadCombinations() {
+            try {
+                const token = localStorage.getItem('admin_token');
+                const response = await fetch('/api/options/combinations', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const combinations = await response.json();
+                    this.displayCombinations(combinations);
+                } else {
+                    this.showAlert('Failed to load combinations', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to load combinations:', error);
+                this.showAlert('Failed to load combinations', 'error');
+            }
+        }
+
+        displayOptions(options) {
+            // Display paper sizes
+            const paperSizesList = document.getElementById('paper-sizes-list');
+            paperSizesList.innerHTML = options.paperSizes.map(size => `
+                <div class="option-item">
+                    <input type="text" class="option-display" value="${size.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('paper-sizes', ${size.id}, 'display_name', this.value)">
+                    <input type="number" class="option-sort" value="${size.sort_order}" onchange="updateOption('paper-sizes', ${size.id}, 'sort_order', this.value)">
+                    <button class="btn btn-danger" onclick="deleteOption('paper-sizes', ${size.id})">Delete</button>
+                </div>
+            `).join('');
+
+            // Display paper types
+            const paperTypesList = document.getElementById('paper-types-list');
+            paperTypesList.innerHTML = options.paperTypes.map(type => `
+                <div class="option-item">
+                    <input type="text" class="option-display" value="${type.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('paper-types', ${type.id}, 'display_name', this.value)">
+                    <input type="number" class="option-sort" value="${type.sort_order}" onchange="updateOption('paper-types', ${type.id}, 'sort_order', this.value)">
+                    <button class="btn btn-danger" onclick="deleteOption('paper-types', ${type.id})">Delete</button>
+                </div>
+            `).join('');
+
+            // Display color modes
+            const colorModesList = document.getElementById('color-modes-list');
+            colorModesList.innerHTML = options.colorModes.map(mode => `
+                <div class="option-item">
+                    <input type="text" class="option-display" value="${mode.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('color-modes', ${mode.id}, 'display_name', this.value)">
+                    <input type="number" class="option-sort" value="${mode.sort_order}" onchange="updateOption('color-modes', ${mode.id}, 'sort_order', this.value)">
+                    <button class="btn btn-danger" onclick="deleteOption('color-modes', ${mode.id})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        displayCombinations(combinations) {
+            const tbody = document.getElementById('combinations-tbody');
+            tbody.innerHTML = combinations.map(combo => `
+                <tr class="${combo.is_available ? '' : 'unavailable'}">
+                    <td>${combo.paper_size_display}</td>
+                    <td>${combo.paper_type_display}</td>
+                    <td>${combo.color_mode_display}</td>
+                    <td>
+                        <input type="number" 
+                               value="${combo.price}" 
+                               step="0.01" 
+                               min="0"
+                               ${combo.is_available ? '' : 'disabled'}
+                               onchange="updateCombination(${combo.id}, 'price', this.value)">
+                    </td>
+                    <td>
+                        <input type="checkbox" 
+                               ${combo.is_available ? 'checked' : ''}
+                               onchange="updateCombination(${combo.id}, 'is_available', this.checked)">
+                    </td>
+                    <td>
+                        <span class="availability-status ${combo.is_available ? 'available' : 'unavailable'}">${combo.is_available ? 'Available' : 'Unavailable'}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async addOption(type, data) {
+            try {
+                const token = localStorage.getItem('admin_token');
+                const response = await fetch(`/api/options/${type}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    this.showAlert(`${type} added successfully!`, 'success');
+                    this.loadOptions();
+                    this.loadCombinations();
+                } else {
+                    const errorData = await response.json();
+                    this.showAlert(errorData.error || `Failed to add ${type}`, 'error');
+                }
+            } catch (error) {
+                console.error(`Failed to add ${type}:`, error);
+                this.showAlert(`Failed to add ${type}`, 'error');
+            }
+        }
+
+        async updateOption(type, id, field, value) {
+            try {
+                const token = localStorage.getItem('admin_token');
+                const updateData = { [field]: value };
+                
+                const response = await fetch(`/api/options/${type}/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (response.ok) {
+                    this.showAlert(`${type} updated successfully!`, 'success');
+                } else {
+                    const errorData = await response.json();
+                    this.showAlert(errorData.error || `Failed to update ${type}`, 'error');
+                }
+            } catch (error) {
+                console.error(`Failed to update ${type}:`, error);
+                this.showAlert(`Failed to update ${type}`, 'error');
+            }
+        }
+
+        async deleteOption(type, id) {
+            // Get the option name for display in modal
+            let optionName = 'Unknown';
+            try {
+                const token = localStorage.getItem('admin_token');
+                const response = await fetch('/api/options', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const options = await response.json();
+                    if (type === 'paper-sizes' && options.paperSizes) {
+                        const option = options.paperSizes.find(opt => opt.id === parseInt(id));
+                        optionName = option ? option.display_name || option.name : 'Unknown';
+                    } else if (type === 'paper-types' && options.paperTypes) {
+                        const option = options.paperTypes.find(opt => opt.id === parseInt(id));
+                        optionName = option ? option.display_name || option.name : 'Unknown';
+                    } else if (type === 'color-modes' && options.colorModes) {
+                        const option = options.colorModes.find(opt => opt.id === parseInt(id));
+                        optionName = option ? option.display_name || option.name : 'Unknown';
+                    }
+                }
+            } catch (error) {
+                console.error('Error getting option name:', error);
+            }
+            
+            // Open modal instead of using confirm()
+            openDeleteOptionModal(type, id, optionName);
+        }
+
+        async updateCombination(id, field, value) {
+            try {
+                const token = localStorage.getItem('admin_token');
+                const updateData = { [field]: value };
+                console.log(`Sending update for combination ${id}:`, updateData);
+                
+                const response = await fetch(`/api/options/combinations/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (response.ok) {
+                    this.showAlert('Combination updated successfully!', 'success');
+                    this.loadCombinations();
+                } else {
+                    const errorData = await response.json();
+                    this.showAlert(errorData.error || 'Failed to update combination', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to update combination:', error);
+                this.showAlert('Failed to update combination', 'error');
+            }
+        }
     }
 
         // Global functions for order management
@@ -2431,6 +2857,67 @@
             adminPanel.exportOrders();
         }
 
+        // Options & Prices Global Functions
+        function addPaperSize() {
+            const displayName = document.getElementById('new-paper-size-display').value;
+            const sortOrder = parseInt(document.getElementById('new-paper-size-sort').value) || 0;
+
+            if (!displayName) {
+                adminPanel.showAlert('Please fill in the display name', 'error');
+                return;
+            }
+
+            adminPanel.addOption('paper-sizes', { display_name: displayName, sort_order: sortOrder });
+            
+            // Clear form
+            document.getElementById('new-paper-size-display').value = '';
+            document.getElementById('new-paper-size-sort').value = '0';
+        }
+
+        function addPaperType() {
+            const displayName = document.getElementById('new-paper-type-display').value;
+            const sortOrder = parseInt(document.getElementById('new-paper-type-sort').value) || 0;
+
+            if (!displayName) {
+                adminPanel.showAlert('Please fill in the display name', 'error');
+                return;
+            }
+
+            adminPanel.addOption('paper-types', { display_name: displayName, sort_order: sortOrder });
+            
+            // Clear form
+            document.getElementById('new-paper-type-display').value = '';
+            document.getElementById('new-paper-type-sort').value = '0';
+        }
+
+        function addColorMode() {
+            const displayName = document.getElementById('new-color-mode-display').value;
+            const sortOrder = parseInt(document.getElementById('new-color-mode-sort').value) || 0;
+
+            if (!displayName) {
+                adminPanel.showAlert('Please fill in the display name', 'error');
+                return;
+            }
+
+            adminPanel.addOption('color-modes', { display_name: displayName, sort_order: sortOrder });
+            
+            // Clear form
+            document.getElementById('new-color-mode-display').value = '';
+            document.getElementById('new-color-mode-sort').value = '0';
+        }
+
+        function updateOption(type, id, field, value) {
+            adminPanel.updateOption(type, id, field, value);
+        }
+
+        function deleteOption(type, id) {
+            adminPanel.deleteOption(type, id);
+        }
+
+        function updateCombination(id, field, value) {
+            adminPanel.updateCombination(id, field, value);
+        }
+
         // Delete confirmation modal functions
         let orderToDelete = null;
 
@@ -2511,6 +2998,79 @@
             } catch (error) {
                 console.error('Error deleting order:', error);
                 adminPanel.showAlert('An error occurred while deleting the order', 'error');
+            }
+        }
+
+        // Option Delete Modal Functions
+        let optionToDelete = null;
+
+        function openDeleteOptionModal(type, id, optionName) {
+            optionToDelete = { type, id, optionName };
+            
+            // Update modal content
+            const message = document.getElementById('delete-option-message');
+            const details = document.getElementById('delete-option-details');
+            
+            message.textContent = `Are you sure you want to delete this ${type.replace('-', ' ')}?`;
+            details.innerHTML = `
+                <strong>Option:</strong> ${optionName}<br>
+                <strong>Type:</strong> ${type.replace('-', ' ')}<br>
+                <strong>ID:</strong> ${id}
+            `;
+            
+            // Show modal
+            const modal = document.getElementById('delete-option-modal');
+            modal.style.display = 'block';
+        }
+
+        function closeDeleteOptionModal() {
+            const modal = document.getElementById('delete-option-modal');
+            modal.style.display = 'none';
+            optionToDelete = null;
+        }
+
+        async function confirmDeleteOption() {
+            if (!optionToDelete) {
+                console.error('No option selected for deletion');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('admin_token');
+                if (!token) {
+                    adminPanel.showAlert('Authentication required. Please log in again.', 'error');
+                    return;
+                }
+
+                const response = await fetch(`/api/options/${optionToDelete.type}/${optionToDelete.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    adminPanel.showAlert(`${optionToDelete.type.replace('-', ' ')} deleted successfully!`, 'success');
+                    
+                    // Close modal
+                    closeDeleteOptionModal();
+                    
+                    // Reload options and combinations
+                    await adminPanel.loadOptions();
+                    await adminPanel.loadCombinations();
+                } else if (response.status === 401 || response.status === 403) {
+                    adminPanel.showAlert('Session expired. Please log in again.', 'error');
+                    setTimeout(() => {
+                        window.location.href = '/admin/login.html';
+                    }, 2000);
+                } else {
+                    const errorData = await response.json();
+                    adminPanel.showAlert(errorData.error || 'Failed to delete option', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting option:', error);
+                adminPanel.showAlert('An error occurred while deleting the option', 'error');
             }
         }
 
@@ -2601,9 +3161,16 @@
 
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modal = document.getElementById('order-modal');
-            if (event.target === modal) {
+            const orderModal = document.getElementById('order-modal');
+            const deleteConfirmationModal = document.getElementById('delete-confirmation-modal');
+            const deleteOptionModal = document.getElementById('delete-option-modal');
+            
+            if (event.target === orderModal) {
                 closeOrderModal();
+            } else if (event.target === deleteConfirmationModal) {
+                closeDeleteConfirmationModal();
+            } else if (event.target === deleteOptionModal) {
+                closeDeleteOptionModal();
             }
         }
 
@@ -3048,6 +3615,27 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeDeleteConfirmationModal()">Cancel</button>
                 <button class="btn btn-danger" onclick="confirmDeleteOrder()">Delete Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Option Delete Confirmation Modal -->
+    <div id="delete-option-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Delete Option</h3>
+                <span class="close" onclick="closeDeleteOptionModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="delete-option-message">Are you sure you want to delete this option?</p>
+                <p><strong>This will also delete all related combinations and cannot be undone.</strong></p>
+                <div id="delete-option-details" style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                    <!-- Option details will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDeleteOptionModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDeleteOption()">Delete Option</button>
             </div>
         </div>
     </div>
