@@ -46,6 +46,53 @@
             transition: background-color 0.3s;
         }
 
+        /* Mobile Navigation */
+        .mobile-nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .mobile-nav-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #2d2d2d;
+            border-top: 1px solid #444;
+            z-index: 1000;
+        }
+
+        .mobile-nav-menu.active {
+            display: block;
+        }
+
+        .mobile-nav-tab {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            text-align: left;
+            border-bottom: 1px solid #444;
+            transition: background-color 0.3s;
+        }
+
+        .mobile-nav-tab:hover {
+            background-color: #444;
+        }
+
+        .mobile-nav-tab.active {
+            background-color: #10B981;
+        }
+
         .nav-tab.active {
             background-color: #10B981;
         }
@@ -316,13 +363,15 @@
             background: white;
             border: 1px solid #e1e5e9;
             border-radius: 5px;
+            gap: 10px;
+            width: 100%;
         }
 
         .option-item input {
-            margin-right: 10px;
-            padding: 5px;
+            padding: 8px 12px;
             border: 1px solid #ccc;
-            border-radius: 3px;
+            border-radius: 4px;
+            font-size: 14px;
         }
 
         .option-item .option-name {
@@ -330,12 +379,194 @@
         }
 
         .option-item .option-display {
-            min-width: 300px;
+            min-width: 180px;
             flex: 1;
+            max-width: none;
+        }
+
+        .option-item .btn-danger {
+            min-width: 40px;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
         }
 
         .option-item .option-sort {
             min-width: 80px;
+            display: none; /* Hide the numeric sort order input */
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: #666;
+            font-size: 16px;
+            padding: 8px;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            background-color: #f8f9fa;
+            border: 1px solid #e1e5e9;
+            flex-shrink: 0;
+        }
+
+        .drag-handle:hover {
+            background-color: #e1e5e9;
+            color: #333;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .option-item.sortable-ghost {
+            opacity: 0.4;
+            background-color: #f0f0f0;
+        }
+
+        .option-item.sortable-chosen {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .option-item.sortable-drag {
+            transform: rotate(2deg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 15px;
+                position: relative;
+            }
+
+            .nav-tabs {
+                display: none;
+            }
+
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .option-item {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+                padding: 12px;
+            }
+
+            .option-item .option-display {
+                min-width: 120px;
+                flex: 1;
+                max-width: none;
+            }
+
+            .drag-handle {
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
+            }
+
+            .option-item .btn-danger {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .add-option {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .add-option input {
+                min-width: auto;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .add-option input[placeholder*="Display Name"] {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .combinations-table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .combinations-table {
+                min-width: 600px;
+            }
+
+            .combinations-table th,
+            .combinations-table td {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .status-chip {
+                padding: 4px 8px;
+                font-size: 11px;
+                min-width: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 8px 10px;
+            }
+
+            .main-content {
+                padding: 10px;
+            }
+
+            .options-section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .option-item {
+                padding: 10px;
+                gap: 6px;
+            }
+
+            .drag-handle {
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
+            }
+
+            .option-item .btn-danger {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+
+            .combinations-table th,
+            .combinations-table td {
+                padding: 6px;
+                font-size: 12px;
+            }
+
+            .status-chip {
+                padding: 3px 6px;
+                font-size: 10px;
+                min-width: 60px;
+            }
         }
 
         .add-option {
@@ -386,6 +617,37 @@
 
         .combinations-table tr:hover {
             background: #f8f9fa;
+        }
+
+        .status-chip {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .status-chip.available {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .status-chip.available:hover {
+            background-color: #059669;
+        }
+
+        .status-chip.unavailable {
+            background-color: #6B7280;
+            color: white;
+        }
+
+        .status-chip.unavailable:hover {
+            background-color: #4B5563;
         }
 
         .combinations-table tr.unavailable {
@@ -861,16 +1123,24 @@
 
         <!-- Main App -->
         <div id="main-app" style="display: none;">
-            <div class="header">
-                <img src="/logo.svg" alt="Pioneer Party" class="logo">
-                <div class="nav-tabs">
-                    <button class="nav-tab active" data-tab="orders">Orders</button>
-                    <button class="nav-tab" data-tab="settings">Settings</button>
-                    <button class="nav-tab" data-tab="options">Options & Prices</button>
-                    <button class="nav-tab" data-tab="export">Export</button>
-                    <button class="nav-tab" onclick="logout()">Logout</button>
-                </div>
+        <div class="header">
+            <img src="/logo.svg" alt="Pioneer Party" class="logo">
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="orders">Orders</button>
+                <button class="nav-tab" data-tab="settings">Settings</button>
+                <button class="nav-tab" data-tab="options">Options & Prices</button>
+                <button class="nav-tab" data-tab="export">Export</button>
+                <button class="nav-tab" onclick="logout()">Logout</button>
             </div>
+            <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
+            <div class="mobile-nav-menu" id="mobile-nav-menu">
+                <button class="mobile-nav-tab active" data-tab="orders" onclick="switchTab('orders')">Orders</button>
+                <button class="mobile-nav-tab" data-tab="settings" onclick="switchTab('settings')">Settings</button>
+                <button class="mobile-nav-tab" data-tab="options" onclick="switchTab('options')">Options & Prices</button>
+                <button class="mobile-nav-tab" data-tab="export" onclick="switchTab('export')">Export</button>
+                <button class="mobile-nav-tab" onclick="logout()">Logout</button>
+            </div>
+        </div>
 
             <div class="main-content">
                 <!-- Orders Tab -->
@@ -1201,7 +1471,6 @@
                             </div>
                             <div class="add-option">
                                 <input type="text" id="new-paper-size-display" placeholder="Display Name (e.g., Letter (8.5\" x 11\"))" class="form-input">
-                                <input type="number" id="new-paper-size-sort" placeholder="Sort Order" class="form-input" value="0">
                                 <button class="btn btn-secondary" onclick="addPaperSize()">Add Paper Size</button>
                             </div>
                         </div>
@@ -1214,7 +1483,6 @@
                             </div>
                             <div class="add-option">
                                 <input type="text" id="new-paper-type-display" placeholder="Display Name (e.g., Standard Paper)" class="form-input">
-                                <input type="number" id="new-paper-type-sort" placeholder="Sort Order" class="form-input" value="0">
                                 <button class="btn btn-secondary" onclick="addPaperType()">Add Paper Type</button>
                             </div>
                         </div>
@@ -1227,7 +1495,6 @@
                             </div>
                             <div class="add-option">
                                 <input type="text" id="new-color-mode-display" placeholder="Display Name (e.g., Black & White)" class="form-input">
-                                <input type="number" id="new-color-mode-sort" placeholder="Sort Order" class="form-input" value="0">
                                 <button class="btn btn-secondary" onclick="addColorMode()">Add Color Mode</button>
                             </div>
                         </div>
@@ -1245,7 +1512,6 @@
                                         <th>Paper Type</th>
                                         <th>Color Mode</th>
                                         <th>Price ($)</th>
-                                        <th>Available</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -1353,6 +1619,7 @@
     </div>
 
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
         class AdminPanel {
             constructor() {
@@ -1370,6 +1637,7 @@
             init() {
                 this.checkAuth();
                 this.setupEventListeners();
+                this.setupMobileNavigation();
             }
 
             checkAuth() {
@@ -1450,6 +1718,30 @@
                 });
             }
 
+            setupMobileNavigation() {
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    const mobileMenu = document.getElementById('mobile-nav-menu');
+                    const mobileToggle = document.querySelector('.mobile-nav-toggle');
+                    
+                    if (mobileMenu && mobileMenu.classList.contains('active')) {
+                        if (!mobileMenu.contains(e.target) && !mobileToggle.contains(e.target)) {
+                            mobileMenu.classList.remove('active');
+                        }
+                    }
+                });
+
+                // Close mobile menu on window resize to desktop size
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 768) {
+                        const mobileMenu = document.getElementById('mobile-nav-menu');
+                        if (mobileMenu) {
+                            mobileMenu.classList.remove('active');
+                        }
+                    }
+                });
+            }
+
             async login() {
                 const username = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
@@ -1495,11 +1787,23 @@
             }
 
             switchTab(tabName) {
-                // Update active tab
+                // Update active tab for desktop navigation
                 document.querySelectorAll('.nav-tab').forEach(tab => {
                     tab.classList.remove('active');
                 });
-                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+                const desktopTab = document.querySelector(`.nav-tab[data-tab="${tabName}"]`);
+                if (desktopTab) {
+                    desktopTab.classList.add('active');
+                }
+
+                // Update active tab for mobile navigation
+                document.querySelectorAll('.mobile-nav-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                const mobileTab = document.querySelector(`.mobile-nav-tab[data-tab="${tabName}"]`);
+                if (mobileTab) {
+                    mobileTab.classList.add('active');
+                }
 
                 // Update active content
                 document.querySelectorAll('.tab-content').forEach(content => {
@@ -2572,32 +2876,38 @@
             // Display paper sizes
             const paperSizesList = document.getElementById('paper-sizes-list');
             paperSizesList.innerHTML = options.paperSizes.map(size => `
-                <div class="option-item">
+                <div class="option-item" data-id="${size.id}" data-sort-order="${size.sort_order}">
+                    <div class="drag-handle" title="Drag to reorder">⋮⋮</div>
                     <input type="text" class="option-display" value="${size.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('paper-sizes', ${size.id}, 'display_name', this.value)">
                     <input type="number" class="option-sort" value="${size.sort_order}" onchange="updateOption('paper-sizes', ${size.id}, 'sort_order', this.value)">
-                    <button class="btn btn-danger" onclick="deleteOption('paper-sizes', ${size.id})">Delete</button>
+                    <button class="btn btn-danger" onclick="deleteOption('paper-sizes', ${size.id})" title="Delete">🗑️</button>
                 </div>
             `).join('');
 
             // Display paper types
             const paperTypesList = document.getElementById('paper-types-list');
             paperTypesList.innerHTML = options.paperTypes.map(type => `
-                <div class="option-item">
+                <div class="option-item" data-id="${type.id}" data-sort-order="${type.sort_order}">
+                    <div class="drag-handle" title="Drag to reorder">⋮⋮</div>
                     <input type="text" class="option-display" value="${type.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('paper-types', ${type.id}, 'display_name', this.value)">
                     <input type="number" class="option-sort" value="${type.sort_order}" onchange="updateOption('paper-types', ${type.id}, 'sort_order', this.value)">
-                    <button class="btn btn-danger" onclick="deleteOption('paper-types', ${type.id})">Delete</button>
+                    <button class="btn btn-danger" onclick="deleteOption('paper-types', ${type.id})" title="Delete">🗑️</button>
                 </div>
             `).join('');
 
             // Display color modes
             const colorModesList = document.getElementById('color-modes-list');
             colorModesList.innerHTML = options.colorModes.map(mode => `
-                <div class="option-item">
+                <div class="option-item" data-id="${mode.id}" data-sort-order="${mode.sort_order}">
+                    <div class="drag-handle" title="Drag to reorder">⋮⋮</div>
                     <input type="text" class="option-display" value="${mode.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('color-modes', ${mode.id}, 'display_name', this.value)">
                     <input type="number" class="option-sort" value="${mode.sort_order}" onchange="updateOption('color-modes', ${mode.id}, 'sort_order', this.value)">
-                    <button class="btn btn-danger" onclick="deleteOption('color-modes', ${mode.id})">Delete</button>
+                    <button class="btn btn-danger" onclick="deleteOption('color-modes', ${mode.id})" title="Delete">🗑️</button>
                 </div>
             `).join('');
+
+            // Initialize sortable functionality after rendering
+            this.initializeSortable();
         }
 
         displayCombinations(combinations) {
@@ -2616,12 +2926,10 @@
                                onchange="updateCombination(${combo.id}, 'price', this.value)">
                     </td>
                     <td>
-                        <input type="checkbox" 
-                               ${combo.is_available ? 'checked' : ''}
-                               onchange="updateCombination(${combo.id}, 'is_available', this.checked)">
-                    </td>
-                    <td>
-                        <span class="availability-status ${combo.is_available ? 'available' : 'unavailable'}">${combo.is_available ? 'Available' : 'Unavailable'}</span>
+                        <span class="status-chip ${combo.is_available ? 'available' : 'unavailable'}" 
+                              onclick="toggleAvailability(${combo.id}, ${combo.is_available})">
+                            ${combo.is_available ? 'Available' : 'Unavailable'}
+                        </span>
                     </td>
                 </tr>
             `).join('');
@@ -2728,6 +3036,7 @@
 
                 if (response.ok) {
                     this.showAlert('Combination updated successfully!', 'success');
+                    // Reload combinations to update the display
                     this.loadCombinations();
                 } else {
                     const errorData = await response.json();
@@ -2736,6 +3045,117 @@
             } catch (error) {
                 console.error('Failed to update combination:', error);
                 this.showAlert('Failed to update combination', 'error');
+            }
+        }
+
+        initializeSortable() {
+            // Initialize sortable for paper sizes
+            const paperSizesList = document.getElementById('paper-sizes-list');
+            if (paperSizesList && !paperSizesList.sortableInstance) {
+                paperSizesList.sortableInstance = new Sortable(paperSizesList, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    dragClass: 'sortable-drag',
+                    onEnd: (evt) => {
+                        this.updateSortOrder('paper-sizes', evt.oldIndex, evt.newIndex);
+                    }
+                });
+            }
+
+            // Initialize sortable for paper types
+            const paperTypesList = document.getElementById('paper-types-list');
+            if (paperTypesList && !paperTypesList.sortableInstance) {
+                paperTypesList.sortableInstance = new Sortable(paperTypesList, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    dragClass: 'sortable-drag',
+                    onEnd: (evt) => {
+                        this.updateSortOrder('paper-types', evt.oldIndex, evt.newIndex);
+                    }
+                });
+            }
+
+            // Initialize sortable for color modes
+            const colorModesList = document.getElementById('color-modes-list');
+            if (colorModesList && !colorModesList.sortableInstance) {
+                colorModesList.sortableInstance = new Sortable(colorModesList, {
+                    handle: '.drag-handle',
+                    animation: 150,
+                    ghostClass: 'sortable-ghost',
+                    chosenClass: 'sortable-chosen',
+                    dragClass: 'sortable-drag',
+                    onEnd: (evt) => {
+                        this.updateSortOrder('color-modes', evt.oldIndex, evt.newIndex);
+                    }
+                });
+            }
+        }
+
+        async updateSortOrder(optionType, oldIndex, newIndex) {
+            try {
+                const listElement = document.getElementById(`${optionType.replace('-', '-')}-list`);
+                if (!listElement) return;
+
+                // Show loading state
+                listElement.style.opacity = '0.6';
+                listElement.style.pointerEvents = 'none';
+
+                const items = Array.from(listElement.children);
+                const updates = [];
+
+                // Calculate new sort orders for all items
+                items.forEach((item, index) => {
+                    const id = item.getAttribute('data-id');
+                    const newSortOrder = index + 1;
+                    updates.push({ id: parseInt(id), sort_order: newSortOrder });
+                });
+
+                // Update all sort orders via API
+                const token = localStorage.getItem('admin_token');
+                const promises = updates.map(update => 
+                    fetch(`/api/options/${optionType}/${update.id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ sort_order: update.sort_order })
+                    })
+                );
+
+                await Promise.all(promises);
+                
+                // Update data attributes to reflect new sort order
+                items.forEach((item, index) => {
+                    item.setAttribute('data-sort-order', index + 1);
+                    const sortInput = item.querySelector('.option-sort');
+                    if (sortInput) {
+                        sortInput.value = index + 1;
+                    }
+                });
+
+                // Restore normal state
+                listElement.style.opacity = '1';
+                listElement.style.pointerEvents = 'auto';
+
+                this.showAlert(`${optionType} reordered successfully!`, 'success');
+            } catch (error) {
+                console.error('Failed to update sort order:', error);
+                
+                // Restore normal state on error
+                const listElement = document.getElementById(`${optionType.replace('-', '-')}-list`);
+                if (listElement) {
+                    listElement.style.opacity = '1';
+                    listElement.style.pointerEvents = 'auto';
+                }
+                
+                this.showAlert('Failed to update sort order', 'error');
+                // Reload options to restore correct order
+                this.loadOptions();
             }
         }
     }
@@ -2860,50 +3280,44 @@
         // Options & Prices Global Functions
         function addPaperSize() {
             const displayName = document.getElementById('new-paper-size-display').value;
-            const sortOrder = parseInt(document.getElementById('new-paper-size-sort').value) || 0;
 
             if (!displayName) {
                 adminPanel.showAlert('Please fill in the display name', 'error');
                 return;
             }
 
-            adminPanel.addOption('paper-sizes', { display_name: displayName, sort_order: sortOrder });
+            adminPanel.addOption('paper-sizes', { display_name: displayName, sort_order: 0 });
             
             // Clear form
             document.getElementById('new-paper-size-display').value = '';
-            document.getElementById('new-paper-size-sort').value = '0';
         }
 
         function addPaperType() {
             const displayName = document.getElementById('new-paper-type-display').value;
-            const sortOrder = parseInt(document.getElementById('new-paper-type-sort').value) || 0;
 
             if (!displayName) {
                 adminPanel.showAlert('Please fill in the display name', 'error');
                 return;
             }
 
-            adminPanel.addOption('paper-types', { display_name: displayName, sort_order: sortOrder });
+            adminPanel.addOption('paper-types', { display_name: displayName, sort_order: 0 });
             
             // Clear form
             document.getElementById('new-paper-type-display').value = '';
-            document.getElementById('new-paper-type-sort').value = '0';
         }
 
         function addColorMode() {
             const displayName = document.getElementById('new-color-mode-display').value;
-            const sortOrder = parseInt(document.getElementById('new-color-mode-sort').value) || 0;
 
             if (!displayName) {
                 adminPanel.showAlert('Please fill in the display name', 'error');
                 return;
             }
 
-            adminPanel.addOption('color-modes', { display_name: displayName, sort_order: sortOrder });
+            adminPanel.addOption('color-modes', { display_name: displayName, sort_order: 0 });
             
             // Clear form
             document.getElementById('new-color-mode-display').value = '';
-            document.getElementById('new-color-mode-sort').value = '0';
         }
 
         function updateOption(type, id, field, value) {
@@ -2916,6 +3330,26 @@
 
         function updateCombination(id, field, value) {
             adminPanel.updateCombination(id, field, value);
+        }
+
+        function toggleAvailability(id, currentStatus) {
+            const newStatus = !currentStatus;
+            adminPanel.updateCombination(id, 'is_available', newStatus);
+        }
+
+        // Mobile Navigation Functions
+        function toggleMobileNav() {
+            const mobileMenu = document.getElementById('mobile-nav-menu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        function switchTab(tabName) {
+            // Close mobile menu
+            const mobileMenu = document.getElementById('mobile-nav-menu');
+            mobileMenu.classList.remove('active');
+            
+            // Switch to the tab
+            adminPanel.switchTab(tabName);
         }
 
         // Delete confirmation modal functions
@@ -3011,11 +3445,20 @@
             const message = document.getElementById('delete-option-message');
             const details = document.getElementById('delete-option-details');
             
-            message.textContent = `Are you sure you want to delete this ${type.replace('-', ' ')}?`;
+            // Format type name with proper capitalization
+            let formattedType = type.replace('-', ' ');
+            if (formattedType === 'paper sizes') {
+                formattedType = 'Paper Size';
+            } else if (formattedType === 'paper types') {
+                formattedType = 'Paper Type';
+            } else if (formattedType === 'color modes') {
+                formattedType = 'Color Mode';
+            }
+            
+            message.textContent = `Are you sure you want to delete this ${formattedType}?`;
             details.innerHTML = `
                 <strong>Option:</strong> ${optionName}<br>
-                <strong>Type:</strong> ${type.replace('-', ' ')}<br>
-                <strong>ID:</strong> ${id}
+                <strong>Type:</strong> ${formattedType}
             `;
             
             // Show modal
