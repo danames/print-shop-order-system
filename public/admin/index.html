@@ -1134,16 +1134,29 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
+        .date-chip {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: #E5E7EB;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #D1D5DB;
+        }
+
+        .date-chip:hover {
+            background-color: #D1D5DB;
+            color: #1F2937;
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .clickable-date {
             cursor: pointer;
             transition: all 0.2s ease;
-            padding: 8px;
-            border-radius: 4px;
-        }
-
-        .clickable-date:hover {
-            background-color: #f3f4f6;
-            color: #1f2937;
         }
 
         .status-dropdown {
@@ -2170,8 +2183,10 @@
                                 ${this.formatStatusText(order.status)}
                             </span>
                         </td>
-                        <td class="clickable-date" onclick="showDatePicker(${order.id}, '${order.pickup_date || ''}', '${order.pickup_time || ''}')" title="Click to change pickup date and time">
-                            ${this.formatPickupDateTime(order.pickup_date, order.pickup_time)}
+                        <td>
+                            <span class="date-chip clickable-date" onclick="showDatePicker(${order.id}, '${order.pickup_date || ''}', '${order.pickup_time || ''}')" title="Click to change pickup date and time">
+                                📅 ${this.formatPickupDateTime(order.pickup_date, order.pickup_time)}
+                            </span>
                         </td>
                         <td>
                             <button class="btn btn-secondary" onclick="editOrder(${order.id})" title="Edit">✏️</button>
