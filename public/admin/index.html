@@ -1170,6 +1170,22 @@
             padding: 8px 0;
         }
 
+        .date-dropdown {
+            position: fixed;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0;
+        }
+
+        .date-dropdown .flatpickr-calendar {
+            box-shadow: none !important;
+            border: none !important;
+            margin: 0 !important;
+        }
+
         .status-option {
             padding: 8px 16px;
             cursor: pointer;
@@ -2184,7 +2200,7 @@
                             </span>
                         </td>
                         <td>
-                            <span class="date-chip clickable-date" onclick="showDatePicker(${order.id}, '${order.pickup_date || ''}', '${order.pickup_time || ''}')" title="Click to change pickup date and time">
+                            <span class="date-chip clickable-date" onclick="showDateDropdown(${order.id}, '${order.pickup_date || ''}', '${order.pickup_time || ''}')" title="Click to change pickup date and time">
                                 📅 ${this.formatPickupDateTime(order.pickup_date, order.pickup_time)}
                             </span>
                         </td>
@@ -4329,6 +4345,169 @@
 
             // Close dropdown when scrolling
             const closeOnScroll = () => {
+                dropdown.remove();
+                document.removeEventListener('click', closeDropdown);
+                window.removeEventListener('scroll', closeOnScroll);
+            };
+            
+            setTimeout(() => {
+                document.addEventListener('click', closeDropdown);
+                window.addEventListener('scroll', closeOnScroll);
+            }, 100);
+        }
+
+        function showDateDropdown(orderId, currentDate, currentTime) {
+            // Ensure settings are loaded before opening picker
+            if (!adminPanel.settings || !adminPanel.settings.pickup_settings) {
+                console.log('Settings not loaded yet, loading settings first...');
+                adminPanel.loadSettings().then(() => {
+                    showDateDropdown(orderId, currentDate, currentTime);
+                });
+                return;
+            }
+
+            // Remove any existing dropdowns
+            const existingDropdown = document.querySelector('.date-dropdown');
+            if (existingDropdown) {
+                existingDropdown.remove();
+            }
+
+            // Find the clicked date element
+            const dateElement = event.target;
+            const rect = dateElement.getBoundingClientRect();
+
+            // Create dropdown container
+            const dropdown = document.createElement('div');
+            dropdown.className = 'date-dropdown';
+            dropdown.style.left = rect.left + 'px';
+            dropdown.style.top = (rect.bottom + 10) + 'px';
+
+            // Create hidden input for Flatpickr
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.style.display = 'none';
+            dropdown.appendChild(input);
+
+            // Add to DOM first
+            document.body.appendChild(dropdown);
+
+            // Format current date/time for Flatpickr
+            let defaultDateTimeValue = '';
+            if (currentDate) {
+                defaultDateTimeValue = currentDate;
+                if (currentTime) {
+                    defaultDateTimeValue += ' ' + currentTime;
+                }
+            }
+
+            // Initialize Flatpickr with simplified config
+            
+            const flatpickrInstance = flatpickr(input, {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: false,
+                defaultDate: defaultDateTimeValue || undefined,
+                minDate: "today",
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length > 0) {
+                        const selectedDate = selectedDates[0];
+                        const newDate = selectedDate.toISOString().split('T')[0];
+                        const newTime = selectedDate.toTimeString().split(' ')[0].substring(0, 5);
+                        
+                        // Update the order
+                        adminPanel.updateOrderPickupDateTime(orderId, newDate, newTime);
+                        
+                        // Close dropdown
+                        dropdown.remove();
+                    }
+                },
+                onClose: function() {
+                    // Close dropdown when Flatpickr closes
+                    setTimeout(() => {
+                        if (dropdown.parentNode) {
+                            dropdown.remove();
+                        }
+                    }, 100);
+                }
+            });
+
+            // Check if Flatpickr was initialized properly
+            if (!flatpickrInstance) {
+                console.error('Failed to initialize Flatpickr');
+                dropdown.remove();
+                return;
+            }
+            
+            // Get the actual instance (Flatpickr returns an array)
+            const fpInstance = Array.isArray(flatpickrInstance) ? flatpickrInstance[0] : flatpickrInstance;
+
+            // Step 1: Calculate smart positioning BEFORE opening Flatpickr
+            const targetLeft = rect.left;
+            
+            // Estimate calendar height (approximate)
+            const estimatedCalendarHeight = 350; // Flatpickr calendar is roughly 350px tall
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            
+            let targetTop;
+            if (spaceBelow >= estimatedCalendarHeight + 10) {
+                // Enough space below - position below the chip
+                targetTop = rect.bottom + 10;
+                console.log('📐 Positioning below chip (space below:', spaceBelow, 'px)');
+            } else if (spaceAbove >= estimatedCalendarHeight + 10) {
+                // Not enough space below, but enough above - position above the chip
+                targetTop = rect.top - estimatedCalendarHeight - 10;
+                console.log('📐 Positioning above chip (space above:', spaceAbove, 'px)');
+            } else {
+                // Not enough space above or below - position below but adjust for viewport
+                targetTop = Math.min(rect.bottom + 10, window.innerHeight - estimatedCalendarHeight - 10);
+                console.log('📐 Positioning below with viewport adjustment');
+            }
+            
+            // Step 2: Open Flatpickr
+            if (fpInstance && fpInstance.open) {
+                fpInstance.open();
+                
+                // Step 3: Immediately position and show (no delay)
+                // Use requestAnimationFrame for immediate positioning
+                requestAnimationFrame(() => {
+                    const calendars = document.querySelectorAll('.flatpickr-calendar');
+                    
+                    // Find the most recent calendar
+                    const calendar = calendars[calendars.length - 1];
+                    
+                    if (calendar) {
+                        // Force position immediately
+                        calendar.style.position = 'fixed';
+                        calendar.style.left = targetLeft + 'px';
+                        calendar.style.top = targetTop + 'px';
+                        calendar.style.zIndex = '1001';
+                        calendar.style.visibility = 'visible';
+                    }
+                });
+            } else {
+                console.error('Cannot open Flatpickr - no valid instance or open method');
+                dropdown.remove();
+                return;
+            }
+
+            // Close dropdown when clicking outside
+            const closeDropdown = (e) => {
+                if (!dropdown.contains(e.target) && e.target !== dateElement) {
+                    // Also close any open Flatpickr calendars
+                    const calendars = document.querySelectorAll('.flatpickr-calendar');
+                    calendars.forEach(cal => cal.remove());
+                    dropdown.remove();
+                    document.removeEventListener('click', closeDropdown);
+                    window.removeEventListener('scroll', closeOnScroll);
+                }
+            };
+
+            // Close dropdown when scrolling
+            const closeOnScroll = () => {
+                // Close any open Flatpickr calendars
+                const calendars = document.querySelectorAll('.flatpickr-calendar');
+                calendars.forEach(cal => cal.remove());
                 dropdown.remove();
                 document.removeEventListener('click', closeDropdown);
                 window.removeEventListener('scroll', closeOnScroll);
