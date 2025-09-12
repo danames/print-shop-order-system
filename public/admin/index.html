@@ -142,6 +142,18 @@
             font-size: 16px;
         }
 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+            box-sizing: border-box;
+        }
+
         .btn {
             padding: 12px 24px;
             border: none;
@@ -178,8 +190,32 @@
             background-color: #DC2626;
         }
 
+        .btn-danger-mauve {
+            background-color: #FAA18F;
+            color: white;
+        }
+
+        .btn-danger-mauve:hover {
+            background-color: #F88A6F;
+        }
+
         .btn-full {
             width: 100%;
+        }
+
+        .orders-table .btn {
+            padding: 8px 12px;
+            min-width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 0 2px;
+        }
+
+        .orders-table td:last-child {
+            white-space: nowrap;
         }
 
         .orders-table {
@@ -192,7 +228,7 @@
 
         .orders-table th,
         .orders-table td {
-            padding: 15px;
+            padding: 0px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
@@ -200,6 +236,41 @@
         .orders-table th {
             background-color: #f8f9fa;
             font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            transition: background-color 0.2s;
+            padding: 15px 11px; /* Taller header row */
+        }
+
+        .orders-table th:hover {
+            background-color: #e9ecef;
+        }
+
+        .sort-indicator {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .sort-indicator.active {
+            color: #10B981;
+        }
+
+        .sort-indicator.asc::after {
+            content: "▲";
+        }
+
+        .sort-indicator.desc::after {
+            content: "▼";
+        }
+
+        .sort-indicator:not(.asc):not(.desc)::after {
+            content: "⇅";
+            opacity: 0.5;
         }
 
         .orders-table tr:hover {
@@ -299,17 +370,33 @@
 
         .stat-card {
             background: white;
-            padding: 20px;
+            padding: 10px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             text-align: center;
         }
 
+        .stat-card.clickable-filter {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .stat-card.clickable-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-color: #10B981;
+        }
+
+        .stat-card.clickable-filter:active {
+            transform: translateY(0);
+        }
+
         .stat-number {
-            font-size: 32px;
+            font-size: 20px;
             font-weight: bold;
             color: #10B981;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .stat-label {
@@ -454,6 +541,65 @@
                 display: none;
             }
 
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .stat-card {
+                padding: 15px 10px;
+            }
+
+            .stat-number {
+                font-size: 24px;
+            }
+
+            .stat-label {
+                font-size: 12px;
+            }
+
+            .filter-panel {
+                margin: 0 -10px;
+                padding: 15px 10px;
+            }
+
+            .filter-header {
+                margin-bottom: 15px;
+            }
+
+            .quick-search {
+                margin: 0 -10px 15px -10px;
+                padding: 0 10px;
+            }
+
+            .quick-search input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .add-order-btn {
+                margin: 0 -10px 15px -10px;
+                width: calc(100% + 20px);
+            }
+
+            .orders-table {
+                font-size: 14px;
+                margin: 0 -10px;
+                width: calc(100% + 20px);
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 8px 6px;
+                font-size: 13px;
+            }
+
+            .orders-table th {
+                padding: 12px 6px;
+                font-size: 12px;
+            }
+
             .mobile-nav-toggle {
                 display: block;
             }
@@ -523,6 +669,13 @@
                 font-size: 11px;
                 min-width: 70px;
             }
+
+            .orders-table .btn {
+                min-width: 36px;
+                height: 36px;
+                font-size: 16px;
+                padding: 6px 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -532,6 +685,37 @@
 
             .main-content {
                 padding: 10px;
+            }
+
+            .stats-grid {
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 12px 8px;
+            }
+
+            .stat-number {
+                font-size: 20px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .orders-table {
+                font-size: 12px;
+            }
+
+            .orders-table th,
+            .orders-table td {
+                padding: 6px 4px;
+                font-size: 11px;
+            }
+
+            .orders-table th {
+                padding: 10px 4px;
+                font-size: 10px;
             }
 
             .options-section {
@@ -566,6 +750,19 @@
                 padding: 3px 6px;
                 font-size: 10px;
                 min-width: 60px;
+            }
+
+            .orders-table .btn {
+                min-width: 32px;
+                height: 32px;
+                font-size: 14px;
+                padding: 4px 8px;
+            }
+
+            .form-group textarea {
+                font-size: 16px; /* Prevent zoom on iOS */
+                min-height: 45px;
+                padding: 8px;
             }
         }
 
@@ -740,7 +937,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 10px 20px;
             background-color: #f8f9fa;
             border-bottom: 1px solid #eee;
         }
@@ -918,6 +1115,11 @@
                 width: 95%;
                 padding: 20px;
             }
+
+            .form-group textarea {
+                font-size: 16px; /* Prevent zoom on iOS */
+                min-height: 50px;
+            }
         }
 
         /* Inline editing styles */
@@ -944,7 +1146,7 @@
         }
 
         .status-dropdown {
-            position: absolute;
+            position: fixed;
             background: white;
             border: 1px solid #d1d5db;
             border-radius: 8px;
@@ -965,6 +1167,71 @@
 
         .status-option:hover {
             background-color: #f3f4f6;
+        }
+
+        /* Validation Styles for Admin Modal */
+        .modal .form-group {
+            position: relative;
+        }
+
+        .modal .validation-indicator {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            pointer-events: none;
+            z-index: 10;
+            line-height: 1;
+        }
+        
+        /* Position validation indicators to align with input fields */
+        .modal .form-group input + .validation-indicator {
+            top: calc(50% + 12px); /* Adjust for label height */
+        }
+        
+        /* Reset positioning for phone and email fields that have validation messages below */
+        #modal-phone-indicator,
+        #modal-email-indicator {
+            top: 50%;
+        }
+
+        .modal .validation-indicator.valid {
+            color: #10B981;
+        }
+
+        .modal .validation-indicator.invalid {
+            color: #EF4444;
+        }
+
+        .modal .validation-message {
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .modal .validation-message.error {
+            color: #EF4444;
+            display: block;
+        }
+
+        .modal .validation-message.success {
+            color: #10B981;
+            display: block;
+        }
+
+        .modal input.valid {
+            border-color: #10B981;
+        }
+
+        .modal input.invalid {
+            border-color: #EF4444;
+        }
+
+        .modal .phone-hint {
+            color: #9CA3AF;
+            font-size: 12px;
+            margin-top: 5px;
         }
 
         .status-option .status-badge {
@@ -1146,17 +1413,17 @@
                 <!-- Orders Tab -->
                 <div id="orders-tab" class="tab-content active">
                     <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="total-orders">0</div>
-                            <div class="stat-label">Total Orders</div>
-                        </div>
-                        <div class="stat-card">
+                        <div class="stat-card clickable-filter" onclick="applyStatusFilter('active')" title="Click to filter Active orders">
                             <div class="stat-number" id="active-orders">0</div>
                             <div class="stat-label">Active Orders</div>
                         </div>
-                        <div class="stat-card">
+                        <div class="stat-card clickable-filter" onclick="applyStatusFilter('ready_for_pickup')" title="Click to filter Ready for Pickup orders">
                             <div class="stat-number" id="ready-orders">0</div>
                             <div class="stat-label">Ready for Pickup</div>
+                        </div>
+                        <div class="stat-card clickable-filter" onclick="applyStatusFilter('paid')" title="Click to filter Paid orders">
+                            <div class="stat-number" id="paid-orders">0</div>
+                            <div class="stat-label">Paid Orders</div>
                         </div>
                     </div>
 
@@ -1470,7 +1737,7 @@
                                 <!-- Paper sizes will be loaded here -->
                             </div>
                             <div class="add-option">
-                                <input type="text" id="new-paper-size-display" placeholder="Display Name (e.g., Letter (8.5\" x 11\"))" class="form-input">
+                                <input type="text" id="new-paper-size-display" placeholder="e.g. Letter (8.5&Prime; x 11&Prime;)" class="form-input">
                                 <button class="btn btn-secondary" onclick="addPaperSize()">Add Paper Size</button>
                             </div>
                         </div>
@@ -1482,7 +1749,7 @@
                                 <!-- Paper types will be loaded here -->
                             </div>
                             <div class="add-option">
-                                <input type="text" id="new-paper-type-display" placeholder="Display Name (e.g., Standard Paper)" class="form-input">
+                                <input type="text" id="new-paper-type-display" placeholder="e.g. Standard Paper" class="form-input">
                                 <button class="btn btn-secondary" onclick="addPaperType()">Add Paper Type</button>
                             </div>
                         </div>
@@ -1494,7 +1761,7 @@
                                 <!-- Color modes will be loaded here -->
                             </div>
                             <div class="add-option">
-                                <input type="text" id="new-color-mode-display" placeholder="Display Name (e.g., Black & White)" class="form-input">
+                                <input type="text" id="new-color-mode-display" placeholder="e.g. Black & White" class="form-input">
                                 <button class="btn btn-secondary" onclick="addColorMode()">Add Color Mode</button>
                             </div>
                         </div>
@@ -1548,21 +1815,28 @@
                         <div class="form-group">
                             <label for="customer-first-name">First Name:</label>
                             <input type="text" id="customer-first-name" required>
+                            <div class="validation-indicator" id="modal-first-name-indicator"></div>
                         </div>
                         <div class="form-group">
                             <label for="customer-last-name">Last Name:</label>
                             <input type="text" id="customer-last-name" required>
+                            <div class="validation-indicator" id="modal-last-name-indicator"></div>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="customer-phone">Phone:</label>
-                            <input type="tel" id="customer-phone" required>
+                            <input type="tel" id="customer-phone" placeholder="(123) 456-7890" required>
+                            <div class="validation-indicator" id="modal-phone-indicator"></div>
+                            <div class="validation-message" id="modal-phone-message"></div>
+                            <div class="phone-hint">Format: (123) 456-7890</div>
                         </div>
                         <div class="form-group">
                             <label for="customer-email">Email:</label>
                             <input type="email" id="customer-email" required>
+                            <div class="validation-indicator" id="modal-email-indicator"></div>
+                            <div class="validation-message" id="modal-email-message"></div>
                         </div>
                     </div>
 
@@ -1630,6 +1904,7 @@
                 this.socket = null;
                 this.activeFilters = {};
                 this.flatpickrInstances = []; // Store flatpickr instances for dynamic updates
+                this.currentSort = { column: null, direction: null }; // Track current sort state
                 
                 this.init();
             }
@@ -1638,6 +1913,7 @@
                 this.checkAuth();
                 this.setupEventListeners();
                 this.setupMobileNavigation();
+                this.setupModalValidation();
             }
 
             checkAuth() {
@@ -1838,6 +2114,10 @@
                     if (response.ok) {
                         this.orders = await response.json();
                         this.filteredOrders = [...this.orders];
+                        
+                        // Apply default "Active" filter on page load
+                        this.applyDefaultActiveFilter();
+                        
                         this.displayOrders();
                         this.updateStats();
                     }
@@ -1859,9 +2139,13 @@
             }
 
             displayOrders() {
+                console.log('🖥️ displayOrders called');
                 const container = document.getElementById('orders-container');
-                // Always use filteredOrders if filters are active, otherwise use all orders
-                const ordersToDisplay = Object.keys(this.activeFilters).length > 0 ? this.filteredOrders : this.orders;
+                // Use filteredOrders if it has been sorted or if filters are active, otherwise use all orders
+                const ordersToDisplay = (this.currentSort.column || Object.keys(this.activeFilters).length > 0) ? this.filteredOrders : this.orders;
+                console.log('🖥️ Orders to display:', ordersToDisplay.length);
+                console.log('🖥️ Active filters:', Object.keys(this.activeFilters).length);
+                console.log('🖥️ Current sort column:', this.currentSort.column);
                 
                 if (ordersToDisplay.length === 0) {
                     const message = Object.keys(this.activeFilters).length > 0 ? 
@@ -1889,8 +2173,8 @@
                             ${this.formatPickupDateTime(order.pickup_date, order.pickup_time)}
                         </td>
                         <td>
-                            <button class="btn btn-secondary" onclick="editOrder(${order.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deleteOrder(${order.id})">Delete</button>
+                            <button class="btn btn-secondary" onclick="editOrder(${order.id})" title="Edit">✏️</button>
+                            <button class="btn btn-danger-mauve" onclick="deleteOrder(${order.id})" title="Delete">🗑️</button>
                         </td>
                     </tr>
                 `).join('');
@@ -1899,12 +2183,12 @@
                     <table class="orders-table">
                         <thead>
                             <tr>
-                                <th>Order #</th>
-                                <th>Customer</th>
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                                <th>Pickup Date & Time</th>
+                                <th onclick="sortOrders('order_number')">Order #<span class="sort-indicator" data-column="order_number"></span></th>
+                                <th onclick="sortOrders('customer_name')">Customer<span class="sort-indicator" data-column="customer_name"></span></th>
+                                <th onclick="sortOrders('phone')">Phone<span class="sort-indicator" data-column="phone"></span></th>
+                                <th onclick="sortOrders('email')">Email<span class="sort-indicator" data-column="email"></span></th>
+                                <th onclick="sortOrders('status')">Status<span class="sort-indicator" data-column="status"></span></th>
+                                <th onclick="sortOrders('pickup_date')">Pickup Date & Time<span class="sort-indicator" data-column="pickup_date"></span></th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -1919,14 +2203,15 @@
             }
 
             updateStats() {
-                const ordersToCount = Object.keys(this.activeFilters).length > 0 ? this.filteredOrders : this.orders;
-                const totalOrders = ordersToCount.length;
-                const activeOrders = ordersToCount.filter(o => !['picked_up', 'abandoned'].includes(o.status)).length;
-                const readyOrders = ordersToCount.filter(o => o.status === 'ready_for_pickup').length;
+                // Always count from all orders (not filtered) for the stat tiles
+                const allOrders = this.orders;
+                const activeOrders = allOrders.filter(o => !['picked_up', 'abandoned'].includes(o.status)).length;
+                const readyOrders = allOrders.filter(o => o.status === 'ready_for_pickup').length;
+                const paidOrders = allOrders.filter(o => o.status === 'paid').length;
 
-                document.getElementById('total-orders').textContent = totalOrders;
                 document.getElementById('active-orders').textContent = activeOrders;
                 document.getElementById('ready-orders').textContent = readyOrders;
+                document.getElementById('paid-orders').textContent = paidOrders;
             }
 
             applyColorSettings() {
@@ -2022,8 +2307,8 @@
                         <td><span class="status-badge status-${order.status}">${order.status.replace('_', ' ')}</span></td>
                         <td>${order.pickup_date || 'TBD'}</td>
                         <td>
-                            <button class="btn btn-secondary" onclick="editOrder(${order.id})">Edit</button>
-                            <button class="btn btn-danger" onclick="deleteOrder(${order.id})">Delete</button>
+                            <button class="btn btn-secondary" onclick="editOrder(${order.id})" title="Edit">✏️</button>
+                            <button class="btn btn-danger-mauve" onclick="deleteOrder(${order.id})" title="Delete">🗑️</button>
                         </td>
                     </tr>
                 `).join('');
@@ -2032,12 +2317,12 @@
                     <table class="orders-table">
                         <thead>
                             <tr>
-                                <th>Order #</th>
-                                <th>Customer</th>
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                                <th>Pickup Date & Time</th>
+                                <th onclick="sortOrders('order_number')">Order #<span class="sort-indicator" data-column="order_number"></span></th>
+                                <th onclick="sortOrders('customer_name')">Customer<span class="sort-indicator" data-column="customer_name"></span></th>
+                                <th onclick="sortOrders('phone')">Phone<span class="sort-indicator" data-column="phone"></span></th>
+                                <th onclick="sortOrders('email')">Email<span class="sort-indicator" data-column="email"></span></th>
+                                <th onclick="sortOrders('status')">Status<span class="sort-indicator" data-column="status"></span></th>
+                                <th onclick="sortOrders('pickup_date')">Pickup Date & Time<span class="sort-indicator" data-column="pickup_date"></span></th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -2263,6 +2548,12 @@
             }
 
             async saveOrder() {
+                // Check if form is valid before proceeding
+                if (!this.checkModalFormValidity()) {
+                    this.showAlert('Please fix all validation errors before saving.', 'error');
+                    return;
+                }
+
                 const orderId = document.getElementById('order-id').value;
                 const isEdit = orderId !== '';
                 
@@ -2576,6 +2867,51 @@
                 this.updateStats();
             }
 
+            applyDefaultActiveFilter() {
+                // Set the "Active" status checkboxes as checked
+                const activeStatuses = ['received', 'paid', 'in_progress', 'ready_for_pickup'];
+                activeStatuses.forEach(status => {
+                    const checkbox = document.getElementById(`status-${status}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+
+                // Apply the active filter
+                this.activeFilters = this.getFilterValues();
+                this.filteredOrders = this.applyAdvancedFilters(this.orders, this.activeFilters);
+                this.updateActiveFiltersDisplay();
+            }
+
+            applyStatusFilter(statusType) {
+                // Clear all existing filters first
+                this.clearAllFilters();
+                
+                if (statusType === 'active') {
+                    // Apply "Active" filter (all statuses except picked_up and abandoned)
+                    const activeStatuses = ['received', 'paid', 'in_progress', 'ready_for_pickup'];
+                    activeStatuses.forEach(status => {
+                        const checkbox = document.getElementById(`status-${status}`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                } else {
+                    // Apply single status filter
+                    const checkbox = document.getElementById(`status-${statusType}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                }
+
+                // Apply the filter
+                this.activeFilters = this.getFilterValues();
+                this.filteredOrders = this.applyAdvancedFilters(this.orders, this.activeFilters);
+                this.displayOrders();
+                this.updateActiveFiltersDisplay();
+                this.updateStats();
+            }
+
             applyQuickFilter(type) {
                 this.clearAllFilters();
                 
@@ -2642,7 +2978,7 @@
                             this.orders[orderIndex].status = newStatus;
                         }
                         
-                        // Update filtered orders if they exist
+                        // Also update in filteredOrders if it exists
                         const filteredIndex = this.filteredOrders.findIndex(order => order.id === orderId);
                         if (filteredIndex !== -1) {
                             this.filteredOrders[filteredIndex].status = newStatus;
@@ -2689,7 +3025,7 @@
                             if (newTime !== undefined) this.orders[orderIndex].pickup_time = newTime;
                         }
                         
-                        // Update filtered orders if they exist
+                        // Also update in filteredOrders if it exists
                         const filteredIndex = this.filteredOrders.findIndex(order => order.id === orderId);
                         if (filteredIndex !== -1) {
                             if (newDate !== undefined) this.filteredOrders[filteredIndex].pickup_date = newDate;
@@ -2880,7 +3216,7 @@
                     <div class="drag-handle" title="Drag to reorder">⋮⋮</div>
                     <input type="text" class="option-display" value="${size.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('paper-sizes', ${size.id}, 'display_name', this.value)">
                     <input type="number" class="option-sort" value="${size.sort_order}" onchange="updateOption('paper-sizes', ${size.id}, 'sort_order', this.value)">
-                    <button class="btn btn-danger" onclick="deleteOption('paper-sizes', ${size.id})" title="Delete">🗑️</button>
+                    <button class="btn btn-danger-mauve" onclick="deleteOption('paper-sizes', ${size.id})" title="Delete">🗑️</button>
                 </div>
             `).join('');
 
@@ -2891,7 +3227,7 @@
                     <div class="drag-handle" title="Drag to reorder">⋮⋮</div>
                     <input type="text" class="option-display" value="${type.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('paper-types', ${type.id}, 'display_name', this.value)">
                     <input type="number" class="option-sort" value="${type.sort_order}" onchange="updateOption('paper-types', ${type.id}, 'sort_order', this.value)">
-                    <button class="btn btn-danger" onclick="deleteOption('paper-types', ${type.id})" title="Delete">🗑️</button>
+                    <button class="btn btn-danger-mauve" onclick="deleteOption('paper-types', ${type.id})" title="Delete">🗑️</button>
                 </div>
             `).join('');
 
@@ -2902,7 +3238,7 @@
                     <div class="drag-handle" title="Drag to reorder">⋮⋮</div>
                     <input type="text" class="option-display" value="${mode.display_name.replace(/"/g, '&quot;')}" onchange="updateOption('color-modes', ${mode.id}, 'display_name', this.value)">
                     <input type="number" class="option-sort" value="${mode.sort_order}" onchange="updateOption('color-modes', ${mode.id}, 'sort_order', this.value)">
-                    <button class="btn btn-danger" onclick="deleteOption('color-modes', ${mode.id})" title="Delete">🗑️</button>
+                    <button class="btn btn-danger-mauve" onclick="deleteOption('color-modes', ${mode.id})" title="Delete">🗑️</button>
                 </div>
             `).join('');
 
@@ -3095,69 +3431,302 @@
             }
         }
 
-        async updateSortOrder(optionType, oldIndex, newIndex) {
-            try {
-                const listElement = document.getElementById(`${optionType.replace('-', '-')}-list`);
-                if (!listElement) return;
+            async updateSortOrder(optionType, oldIndex, newIndex) {
+                try {
+                    const listElement = document.getElementById(`${optionType.replace('-', '-')}-list`);
+                    if (!listElement) return;
 
-                // Show loading state
-                listElement.style.opacity = '0.6';
-                listElement.style.pointerEvents = 'none';
+                    // Show loading state
+                    listElement.style.opacity = '0.6';
+                    listElement.style.pointerEvents = 'none';
 
-                const items = Array.from(listElement.children);
-                const updates = [];
+                    const items = Array.from(listElement.children);
+                    const updates = [];
 
-                // Calculate new sort orders for all items
-                items.forEach((item, index) => {
-                    const id = item.getAttribute('data-id');
-                    const newSortOrder = index + 1;
-                    updates.push({ id: parseInt(id), sort_order: newSortOrder });
-                });
+                    // Calculate new sort orders for all items
+                    items.forEach((item, index) => {
+                        const id = item.getAttribute('data-id');
+                        const newSortOrder = index + 1;
+                        updates.push({ id: parseInt(id), sort_order: newSortOrder });
+                    });
 
-                // Update all sort orders via API
-                const token = localStorage.getItem('admin_token');
-                const promises = updates.map(update => 
-                    fetch(`/api/options/${optionType}/${update.id}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ sort_order: update.sort_order })
-                    })
-                );
+                    // Update all sort orders via API
+                    const token = localStorage.getItem('admin_token');
+                    const promises = updates.map(update => 
+                        fetch(`/api/options/${optionType}/${update.id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ sort_order: update.sort_order })
+                        })
+                    );
 
-                await Promise.all(promises);
-                
-                // Update data attributes to reflect new sort order
-                items.forEach((item, index) => {
-                    item.setAttribute('data-sort-order', index + 1);
-                    const sortInput = item.querySelector('.option-sort');
-                    if (sortInput) {
-                        sortInput.value = index + 1;
-                    }
-                });
+                    await Promise.all(promises);
+                    
+                    // Update data attributes to reflect new sort order
+                    items.forEach((item, index) => {
+                        item.setAttribute('data-sort-order', index + 1);
+                        const sortInput = item.querySelector('.option-sort');
+                        if (sortInput) {
+                            sortInput.value = index + 1;
+                        }
+                    });
 
-                // Restore normal state
-                listElement.style.opacity = '1';
-                listElement.style.pointerEvents = 'auto';
-
-                this.showAlert(`${optionType} reordered successfully!`, 'success');
-            } catch (error) {
-                console.error('Failed to update sort order:', error);
-                
-                // Restore normal state on error
-                const listElement = document.getElementById(`${optionType.replace('-', '-')}-list`);
-                if (listElement) {
+                    // Restore normal state
                     listElement.style.opacity = '1';
                     listElement.style.pointerEvents = 'auto';
+
+                    this.showAlert(`${optionType} reordered successfully!`, 'success');
+                } catch (error) {
+                    console.error('Failed to update sort order:', error);
+                    
+                    // Restore normal state on error
+                    const listElement = document.getElementById(`${optionType.replace('-', '-')}-list`);
+                    if (listElement) {
+                        listElement.style.opacity = '1';
+                        listElement.style.pointerEvents = 'auto';
+                    }
+                    
+                    this.showAlert('Failed to update sort order', 'error');
+                    // Reload options to restore correct order
+                    this.loadOptions();
+                }
+            }
+
+            sortOrders(column) {
+                console.log('🔍 sortOrders called with column:', column);
+                console.log('📊 Current filteredOrders length:', this.filteredOrders.length);
+                console.log('📊 Current sort state:', this.currentSort);
+
+                // Determine sort direction
+                let direction = 'asc';
+                if (this.currentSort.column === column && this.currentSort.direction === 'asc') {
+                    direction = 'desc';
+                }
+
+                console.log('🔄 New sort direction:', direction);
+
+                // Update sort state
+                this.currentSort = { column, direction };
+
+                // Update sort indicators
+                document.querySelectorAll('.sort-indicator').forEach(indicator => {
+                    indicator.classList.remove('active', 'asc', 'desc');
+                });
+
+                const activeIndicator = document.querySelector(`[data-column="${column}"]`);
+                if (activeIndicator) {
+                    activeIndicator.classList.add('active', direction);
+                    console.log('✅ Updated sort indicator for column:', column);
+                } else {
+                    console.log('❌ Could not find sort indicator for column:', column);
+                }
+
+                // Sort the filtered orders
+                console.log('🔄 Sorting orders...');
+                this.filteredOrders.sort((a, b) => {
+                    let aVal, bVal;
+
+                    switch (column) {
+                        case 'order_number':
+                            aVal = parseInt(a.order_number);
+                            bVal = parseInt(b.order_number);
+                            break;
+                        case 'customer_name':
+                            aVal = `${a.customer_first_name} ${a.customer_last_name}`.toLowerCase();
+                            bVal = `${b.customer_first_name} ${b.customer_last_name}`.toLowerCase();
+                            break;
+                        case 'phone':
+                            aVal = a.customer_phone;
+                            bVal = b.customer_phone;
+                            break;
+                        case 'email':
+                            aVal = a.customer_email.toLowerCase();
+                            bVal = b.customer_email.toLowerCase();
+                            break;
+                        case 'status':
+                            aVal = a.status;
+                            bVal = b.status;
+                            break;
+                        case 'pickup_date':
+                            aVal = a.pickup_date || '';
+                            bVal = b.pickup_date || '';
+                            break;
+                        default:
+                            return 0;
+                    }
+
+                    if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+                    if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+                    return 0;
+                });
+
+                console.log('✅ Orders sorted. First few orders:', this.filteredOrders.slice(0, 3));
+
+                // Re-render the orders
+                console.log('🔄 Calling displayOrders...');
+                this.displayOrders();
+            }
+
+            setupModalValidation() {
+                // Phone number formatting and validation
+                const phoneInput = document.getElementById('customer-phone');
+                if (phoneInput) {
+                    phoneInput.addEventListener('input', (e) => {
+                        this.formatModalPhoneNumber(e.target);
+                        this.validateModalPhone(e.target.value);
+                    });
+
+                    phoneInput.addEventListener('paste', (e) => {
+                        setTimeout(() => {
+                            this.formatModalPhoneNumber(e.target);
+                            this.validateModalPhone(e.target.value);
+                        }, 10);
+                    });
+                }
+
+                // Email validation
+                const emailInput = document.getElementById('customer-email');
+                if (emailInput) {
+                    emailInput.addEventListener('input', (e) => {
+                        this.validateModalEmail(e.target.value);
+                    });
+                }
+
+                // First name validation
+                const firstNameInput = document.getElementById('customer-first-name');
+                if (firstNameInput) {
+                    firstNameInput.addEventListener('input', (e) => {
+                        this.validateModalName(e.target.value, 'modal-first-name-indicator');
+                    });
+                }
+
+                // Last name validation
+                const lastNameInput = document.getElementById('customer-last-name');
+                if (lastNameInput) {
+                    lastNameInput.addEventListener('input', (e) => {
+                        this.validateModalName(e.target.value, 'modal-last-name-indicator');
+                    });
+                }
+
+                // Check form validity on any input change
+                const form = document.getElementById('order-form');
+                if (form) {
+                    form.addEventListener('input', () => {
+                        this.checkModalFormValidity();
+                    });
+                }
+            }
+
+            formatModalPhoneNumber(input) {
+                let value = input.value.replace(/\D/g, ''); // Remove all non-digits
+                
+                // Limit to 10 digits
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
                 }
                 
-                this.showAlert('Failed to update sort order', 'error');
-                // Reload options to restore correct order
-                this.loadOptions();
+                // Format as (XXX) XXX-XXXX
+                if (value.length >= 6) {
+                    value = `(${value.substring(0, 3)}) ${value.substring(3, 6)}-${value.substring(6)}`;
+                } else if (value.length >= 3) {
+                    value = `(${value.substring(0, 3)}) ${value.substring(3)}`;
+                } else if (value.length > 0) {
+                    value = `(${value}`;
+                }
+                
+                input.value = value;
             }
-        }
+
+            validateModalPhone(phone) {
+                const phoneRegex = /^\(\d{3}\) \d{3}-\d{4}$/;
+                const isValid = phoneRegex.test(phone);
+                const indicator = document.getElementById('modal-phone-indicator');
+                const message = document.getElementById('modal-phone-message');
+                
+                if (phone.length === 0) {
+                    indicator.textContent = '';
+                    indicator.className = 'validation-indicator';
+                    message.textContent = '';
+                    message.className = 'validation-message';
+                } else if (isValid) {
+                    indicator.textContent = '✓';
+                    indicator.className = 'validation-indicator valid';
+                    message.textContent = 'Valid phone number';
+                    message.className = 'validation-message success';
+                } else {
+                    indicator.textContent = '✗';
+                    indicator.className = 'validation-indicator invalid';
+                    message.textContent = 'Please enter a valid phone number';
+                    message.className = 'validation-message error';
+                }
+                
+                return isValid;
+            }
+
+            validateModalEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const isValid = emailRegex.test(email);
+                const indicator = document.getElementById('modal-email-indicator');
+                const message = document.getElementById('modal-email-message');
+                
+                if (email.length === 0) {
+                    indicator.textContent = '';
+                    indicator.className = 'validation-indicator';
+                    message.textContent = '';
+                    message.className = 'validation-message';
+                } else if (isValid) {
+                    indicator.textContent = '✓';
+                    indicator.className = 'validation-indicator valid';
+                    message.textContent = 'Valid email address';
+                    message.className = 'validation-message success';
+                } else {
+                    indicator.textContent = '✗';
+                    indicator.className = 'validation-indicator invalid';
+                    message.textContent = 'Please enter a valid email address';
+                    message.className = 'validation-message error';
+                }
+                
+                return isValid;
+            }
+
+            validateModalName(name, indicatorId) {
+                const isValid = name.trim().length > 0;
+                const indicator = document.getElementById(indicatorId);
+                
+                if (name.length === 0) {
+                    indicator.textContent = '';
+                    indicator.className = 'validation-indicator';
+                } else if (isValid) {
+                    indicator.textContent = '✓';
+                    indicator.className = 'validation-indicator valid';
+                }
+                
+                return isValid;
+            }
+
+            checkModalFormValidity() {
+                const phone = document.getElementById('customer-phone').value;
+                const email = document.getElementById('customer-email').value;
+                const firstName = document.getElementById('customer-first-name').value;
+                const lastName = document.getElementById('customer-last-name').value;
+                
+                const isPhoneValid = this.validateModalPhone(phone);
+                const isEmailValid = this.validateModalEmail(email);
+                const isFirstNameValid = this.validateModalName(firstName, 'modal-first-name-indicator');
+                const isLastNameValid = this.validateModalName(lastName, 'modal-last-name-indicator');
+                
+                const submitButton = document.querySelector('#order-form button[type="submit"]');
+                const isFormValid = isPhoneValid && isEmailValid && isFirstNameValid && isLastNameValid;
+                
+                if (submitButton) {
+                    submitButton.disabled = !isFormValid;
+                }
+                
+                return isFormValid;
+            }
     }
 
         // Global functions for order management
@@ -3225,6 +3794,8 @@
             // Apply pickup restrictions to the edit order modal
             setTimeout(() => {
                 applyPickupRestrictionsToEditModal();
+                // Trigger validation for existing data
+                adminPanel.checkModalFormValidity();
             }, 100);
         }
 
@@ -3332,9 +3903,44 @@
             adminPanel.updateCombination(id, field, value);
         }
 
+        // Debounce timer for availability toggles
+        let availabilityDebounceTimers = {};
+
         function toggleAvailability(id, currentStatus) {
             const newStatus = !currentStatus;
-            adminPanel.updateCombination(id, 'is_available', newStatus);
+            
+            // Clear any existing timer for this combination
+            if (availabilityDebounceTimers[id]) {
+                clearTimeout(availabilityDebounceTimers[id]);
+            }
+            
+            // Update the UI immediately for visual feedback
+            const chip = document.querySelector(`[onclick*="toggleAvailability(${id}"]`);
+            if (chip) {
+                chip.textContent = newStatus ? 'Available' : 'Unavailable';
+                chip.className = `status-chip ${newStatus ? 'available' : 'unavailable'}`;
+            }
+            
+            // Set a new timer to make the API call after 300ms
+            availabilityDebounceTimers[id] = setTimeout(() => {
+                adminPanel.updateCombination(id, 'is_available', newStatus);
+                // Clean up the timer reference
+                delete availabilityDebounceTimers[id];
+            }, 300);
+        }
+
+        function sortOrders(column) {
+            console.log('🌐 Global sortOrders function called with column:', column);
+            console.log('🌐 adminPanel exists:', !!adminPanel);
+            if (adminPanel) {
+                adminPanel.sortOrders(column);
+            } else {
+                console.log('❌ adminPanel is not available');
+            }
+        }
+
+        function applyStatusFilter(statusType) {
+            adminPanel.applyStatusFilter(statusType);
         }
 
         // Mobile Navigation Functions
@@ -3636,21 +4242,55 @@
 
             // Find the clicked status element
             const statusElement = event.target;
+            
             const rect = statusElement.getBoundingClientRect();
             
-            // Create dropdown
+            // Create dropdown first to calculate its height
             const dropdown = document.createElement('div');
             dropdown.className = 'status-dropdown';
             dropdown.style.left = rect.left + 'px';
-            dropdown.style.top = (rect.bottom + 5) + 'px';
-
-            // Add status options
+            dropdown.style.top = (rect.bottom + 10) + 'px'; // Temporary position
+            dropdown.style.visibility = 'hidden'; // Hide while calculating
+            
+            // Add status options to calculate height
             statusOptions.forEach(status => {
                 const option = document.createElement('div');
                 option.className = 'status-option';
                 option.innerHTML = `
                     <span class="status-badge status-${status.value}">${status.label}</span>
                 `;
+                dropdown.appendChild(option);
+            });
+            
+            // Add to DOM temporarily to measure
+            document.body.appendChild(dropdown);
+            
+            // Calculate dropdown height and available space
+            const dropdownHeight = dropdown.offsetHeight;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            
+            // Determine optimal position
+            let topPosition;
+            if (spaceBelow >= dropdownHeight + 10) {
+                // Enough space below - position below the chip
+                topPosition = rect.bottom + 10;
+            } else if (spaceAbove >= dropdownHeight + 10) {
+                // Not enough space below, but enough above - position above the chip
+                topPosition = rect.top - dropdownHeight - 10;
+            } else {
+                // Not enough space above or below - position below but adjust for viewport
+                topPosition = Math.min(rect.bottom + 10, window.innerHeight - dropdownHeight - 10);
+            }
+            
+            // Set final position and make visible
+            dropdown.style.top = topPosition + 'px';
+            dropdown.style.visibility = 'visible';
+
+            // Add click handlers to existing options
+            const options = dropdown.querySelectorAll('.status-option');
+            options.forEach((option, index) => {
+                const status = statusOptions[index];
                 
                 if (status.value === currentStatus) {
                     option.style.backgroundColor = '#e5e7eb';
@@ -3660,22 +4300,27 @@
                     adminPanel.updateOrderStatus(orderId, status.value);
                     dropdown.remove();
                 });
-                
-                dropdown.appendChild(option);
             });
-
-            document.body.appendChild(dropdown);
 
             // Close dropdown when clicking outside
             const closeDropdown = (e) => {
                 if (!dropdown.contains(e.target) && e.target !== statusElement) {
                     dropdown.remove();
                     document.removeEventListener('click', closeDropdown);
+                    window.removeEventListener('scroll', closeDropdown);
                 }
+            };
+
+            // Close dropdown when scrolling
+            const closeOnScroll = () => {
+                dropdown.remove();
+                document.removeEventListener('click', closeDropdown);
+                window.removeEventListener('scroll', closeOnScroll);
             };
             
             setTimeout(() => {
                 document.addEventListener('click', closeDropdown);
+                window.addEventListener('scroll', closeOnScroll);
             }, 100);
         }
 
@@ -4057,7 +4702,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeDeleteConfirmationModal()">Cancel</button>
-                <button class="btn btn-danger" onclick="confirmDeleteOrder()">Delete Order</button>
+                <button class="btn btn-danger-mauve" onclick="confirmDeleteOrder()">Delete Order</button>
             </div>
         </div>
     </div>
@@ -4078,7 +4723,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeDeleteOptionModal()">Cancel</button>
-                <button class="btn btn-danger" onclick="confirmDeleteOption()">Delete Option</button>
+                <button class="btn btn-danger-mauve" onclick="confirmDeleteOption()">Delete Option</button>
             </div>
         </div>
     </div>
