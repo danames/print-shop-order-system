@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced PDF.js Viewer</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #controls {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        #viewerContainer {
+            width: 100%;
+            height: calc(100vh - 55px); /* Adjust height for controls */
+            overflow: auto;
+            position: relative;
+            background-color: #525659; /* Add a background for contrast */
+        }
+        .pdfViewer canvas {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin: 20px auto;
+            display: block;
+        }
+        button, input {
+            font-size: 16px;
+            padding: 5px 10px;
+            margin: 0 5px;
+        }
+        input[type="number"] {
+            width: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <button id="zoomOut">-</button>
+        <button id="zoomIn">+</button>
+        <button id="fitWidth">Fit Width</button>
+        <button id="fitPage">Fit Page</button>
+        <span id="pageInfo">
+            Page: <input type="number" id="pageNumber" value="1" min="1"> / <span id="pageCount">0</span>
+        </span>
+    </div>
+
+    <div id="viewerContainer">
+        <div id="viewer" class="pdfViewer"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+    <script>
+        // 2. Set up the worker for PDF.js from a CDN
+        const { getDocument, GlobalWorkerOptions } = pdfjsLib;
+        GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        // 3. Use a sample public PDF file
+        const pdfUrl = 'https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf'; 
+        
+        const viewerContainer = document.getElementById('viewerContainer');
+        const pdfViewerDiv = document.getElementById('viewer');
+        const zoomInBtn = document.getElementById('zoomIn');
+        const zoomOutBtn = document.getElementById('zoomOut');
+        const fitWidthBtn = document.getElementById('fitWidth');
+        const fitPageBtn = document.getElementById('fitPage');
+        const pageNumberInput = document.getElementById('pageNumber');
+        const pageCountSpan = document.getElementById('pageCount');
+
+        let pdfDoc = null;
+        let pageNum = 1;
+        let scale = 1.0;
+        let pageRendering = false;
+        let pageNumPending = null;
+
+        async function renderPage(num) {
+            pageRendering = true;
+            try {
+                const page = await pdfDoc.getPage(num);
+                const viewport = page.getViewport({ scale });
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                pdfViewerDiv.innerHTML = ''; // Clear previous page
+                pdfViewerDiv.appendChild(canvas);
+
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+
+                pageRendering = false;
+                pageNumberInput.value = num;
+
+                // Check if another page was requested while rendering
+                if (pageNumPending !== null) {
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+            } catch (error) {
+                console.error('Error during page rendering:', error);
+                pageRendering = false;
+            }
+        }
+
+        async function loadPdf() {
+            try {
+                const loadingTask = getDocument(pdfUrl);
+                pdfDoc = await loadingTask.promise;
+                pageCountSpan.textContent = pdfDoc.numPages;
+                pageNumberInput.max = pdfDoc.numPages;
+                renderPage(pageNum);
+            } catch (reason) {
+                console.error('Error during PDF loading:', reason);
+            }
+        }
+
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        function zoom(direction) {
+            const step = 0.25;
+            if (direction === 'in') {
+                scale = Math.min(scale + step, 4.0); // Max zoom level
+            } else {
+                scale = Math.max(scale - step, 0.25); // Min zoom level
+            }
+            queueRenderPage(pageNum);
+        }
+        
+        // 4. Modified fit functions to use the public `getPage` API
+        async function fitToWidth() {
+            if (!pdfDoc) return;
+            const page = await pdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: 1 });
+            scale = viewerContainer.clientWidth / viewport.width;
+            queueRenderPage(pageNum);
+        }
+
+        async function fitToPage() {
+            if (!pdfDoc) return;
+            const page = await pdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: 1 });
+            const scaleX = viewerContainer.clientWidth / viewport.width;
+            const scaleY = viewerContainer.clientHeight / viewport.height;
+            scale = Math.min(scaleX, scaleY);
+            queueRenderPage(pageNum);
+        }
+        
+        function handleScroll(event) {
+             // Zoom on Ctrl + Scroll
+            if (event.ctrlKey) {
+                event.preventDefault(); 
+                if (event.deltaY < 0) {
+                    zoom('in');
+                } else {
+                    zoom('out');
+                }
+            }
+        }
+
+        // Event listeners
+        zoomInBtn.addEventListener('click', () => zoom('in'));
+        zoomOutBtn.addEventListener('click', () => zoom('out'));
+        fitWidthBtn.addEventListener('click', fitToWidth);
+        fitPageBtn.addEventListener('click', fitToPage);
+        viewerContainer.addEventListener('wheel', handleScroll, { passive: false });
+
+        pageNumberInput.addEventListener('change', (e) => {
+            const targetPage = Number(e.target.value);
+            if (pdfDoc && targetPage > 0 && targetPage <= pdfDoc.numPages) {
+                pageNum = targetPage;
+                queueRenderPage(pageNum);
+            } else {
+                // Reset to the current page number if input is invalid
+                e.target.value = pageNum;
+            }
+        });
+        
+        // Initial PDF load
+        loadPdf();
+    </script>
+</body>
+</html>

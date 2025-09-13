@@ -34,7 +34,8 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io", "https://cdn.jsdelivr.net"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.socket.io", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
+        workerSrc: ["'self'", "blob:", "https://cdnjs.cloudflare.com"],
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
       imgSrc: ["'self'", "data:"],
@@ -82,12 +83,16 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin', 'index.html'));
 });
 
+app.get('/display', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'display', 'index.html'));
+});
+
 app.get('/order', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'order', 'index.html'));
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'display', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'order', 'index.html'));
 });
 
 // Socket.io for real-time updates
@@ -106,9 +111,9 @@ app.set('io', io);
 initDatabase().then(() => {
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`TV Display: http://localhost:${PORT}`);
+    console.log(`Order Form: http://localhost:${PORT}`);
+    console.log(`TV Display: http://localhost:${PORT}/display`);
     console.log(`Admin Panel: http://localhost:${PORT}/admin`);
-    console.log(`Order Form: http://localhost:${PORT}/order`);
   });
 }).catch(err => {
   console.error('Failed to initialize database:', err);

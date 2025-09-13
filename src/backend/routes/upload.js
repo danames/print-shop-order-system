@@ -59,7 +59,7 @@ router.post('/', upload.single('file'), (req, res) => {
       filename: req.file.filename,
       originalName: req.file.originalname,
       size: req.file.size,
-      path: req.file.path,
+      path: req.file.filename, // Store just the filename (relative path)
       mimetype: req.file.mimetype
     };
     
@@ -84,7 +84,7 @@ router.post('/admin', authenticateToken, upload.single('file'), (req, res) => {
       filename: req.file.filename,
       originalName: req.file.originalname,
       size: req.file.size,
-      path: req.file.path,
+      path: req.file.filename, // Store just the filename (relative path)
       mimetype: req.file.mimetype
     };
     

@@ -278,6 +278,15 @@
             background-color: #f8f9fa;
         }
 
+        .order-row {
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .order-row:hover {
+            background-color: #e3f2fd !important;
+        }
+
         .status-badge {
             padding: 4px 8px;
             border-radius: 12px;
@@ -315,11 +324,314 @@
             overflow-y: auto;
         }
 
+        /* View Modal Styles */
+        .view-modal-content {
+            max-width: 1200px;
+            width: 95%;
+            max-height: 90vh;
+            padding: 30px;
+        }
+
+        .view-modal-body {
+            display: flex;
+            height: calc(90vh - 140px); /* Account for header + padding */
+            min-height: 600px;
+        }
+
+        .view-modal-left {
+            width: 60%; /* Fixed width instead of flex: 1 */
+            padding: 20px;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .view-modal-right {
+            width: 40%; /* Fixed width instead of flex: 1 */
+            padding: 20px;
+            overflow-y: auto;
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.1),
+                0 1px 3px rgba(0, 0, 0, 0.08);
+            position: relative;
+        }
+        
+        /* Scroll indicators - fade effect at top and bottom */
+        .view-modal-right::before,
+        .view-modal-right::after {
+            content: '';
+            position: sticky;
+            left: 0;
+            right: 0;
+            height: 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .view-modal-right::before {
+            top: 0;
+            background: linear-gradient(to bottom, #fafafa 0%, transparent 100%);
+            margin: -20px -20px 0 -20px;
+        }
+        
+        .view-modal-right::after {
+            bottom: 0;
+            background: linear-gradient(to top, #fafafa 0%, transparent 100%);
+            margin: 0 -20px -20px -20px;
+        }
+        
+        /* Custom scrollbar styling */
+        .view-modal-right::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .view-modal-right::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .view-modal-right::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        .view-modal-right::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* Hover effect to indicate interactivity */
+        .view-modal-right:hover {
+            box-shadow: 
+                0 6px 12px rgba(0, 0, 0, 0.15),
+                0 2px 6px rgba(0, 0, 0, 0.1);
+            border-color: #d0d0d0;
+        }
+
+        .file-preview-container {
+            height: calc(100% - 60px); /* Fixed height, accounting for PDF controls */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-preview {
+            width: 100%;
+            flex: 1; /* Take remaining space in container */
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            overflow: auto; /* Allow scrolling when content is larger than container */
+            position: relative; /* For proper canvas positioning */
+            box-sizing: border-box; /* Include border in width/height calculation */
+        }
+
+        .preview-placeholder {
+            text-align: center;
+            color: #666;
+        }
+
+        .preview-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .preview-controls {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .order-details {
+            height: 100%;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+        }
+
+        .detail-section h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+            min-width: 140px;
+            margin-right: 15px;
+        }
+
+        .detail-value {
+            color: #333;
+            flex: 1;
+            word-break: break-word;
+        }
+
+        /* PDF Controls Styles */
+        .pdf-controls {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pdf-controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .pdf-controls-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pdf-controls-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-info, .zoom-level {
+            font-size: 12px;
+            color: #666;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+            min-width: 30px;
+        }
+
+        /* PDF Viewer Styles */
+        .pdf-viewer {
+            /* Position canvas like in the sample code */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            margin: 20px auto;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+
+
+        .image-viewer {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .view-modal-content {
+                width: 98%;
+                margin: 2% auto;
+            }
+
+            .view-modal-body {
+                flex-direction: column;
+                height: auto;
+                min-height: auto;
+            }
+            
+            .view-modal-left {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                min-height: 300px;
+            }
+            
+            .view-modal-right {
+                width: 100%;
+                max-height: 50vh;
+            }
+
+            .detail-label {
+                min-width: 100px;
+                font-size: 14px;
+            }
+
+            .detail-value {
+                font-size: 14px;
+            }
+        }
+
+        /* File Upload Styles */
+        .file-upload {
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            transition: border-color 0.3s;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: #10B981;
+        }
+
+        .file-upload.dragover {
+            border-color: #10B981;
+            background-color: #f0fdf4;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+        }
+        
+        .modal-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .order-navigation {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .order-position {
+            font-size: 14px;
+            color: #666;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .order-row.highlighted {
+            background-color: #e3f2fd !important;
+            border-left: 4px solid #2196f3;
         }
 
         .close {
@@ -1880,6 +2192,19 @@
                         <input type="text" id="pickup-datetime" placeholder="Select date and time">
                     </div>
 
+                    <div class="form-group">
+                        <label>File Upload (Optional)</label>
+                        <div class="file-upload" id="modal-file-upload-area">
+                            <input type="file" id="modal-file-input" name="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif">
+                            <p>Click to select file or drag and drop</p>
+                            <small>Accepted formats: PDF, Word documents, Images (JPG, PNG, GIF)<br>Maximum file size: 25MB</small>
+                        </div>
+                        <div class="file-info" id="modal-file-info">
+                            <strong>Selected file:</strong> <span id="modal-file-name"></span><br>
+                            <strong>Size:</strong> <span id="modal-file-size"></span>
+                        </div>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="status">Status:</label>
@@ -2010,6 +2335,9 @@
                     this.saveOrder();
                 });
 
+                // File upload for modal
+                this.setupModalFileUpload();
+
                 // Search
                 document.getElementById('search-orders').addEventListener('input', (e) => {
                     this.filterOrders(e.target.value);
@@ -2022,6 +2350,68 @@
                         checkbox.checked = !checkbox.checked;
                     });
                 });
+            }
+
+            setupModalFileUpload() {
+                const fileInput = document.getElementById('modal-file-input');
+                const fileUploadArea = document.getElementById('modal-file-upload-area');
+                const fileInfo = document.getElementById('modal-file-info');
+                const fileName = document.getElementById('modal-file-name');
+                const fileSize = document.getElementById('modal-file-size');
+
+                if (!fileInput || !fileUploadArea) return;
+
+                // File input change
+                fileInput.addEventListener('change', (e) => {
+                    this.handleModalFileSelect(e.target.files[0]);
+                });
+
+                // Click to select file
+                fileUploadArea.addEventListener('click', () => {
+                    fileInput.click();
+                });
+
+                // Drag and drop
+                fileUploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    fileUploadArea.classList.add('dragover');
+                });
+
+                fileUploadArea.addEventListener('dragleave', () => {
+                    fileUploadArea.classList.remove('dragover');
+                });
+
+                fileUploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    fileUploadArea.classList.remove('dragover');
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        fileInput.files = files;
+                        this.handleModalFileSelect(files[0]);
+                    }
+                });
+            }
+
+            handleModalFileSelect(file) {
+                const fileInfo = document.getElementById('modal-file-info');
+                const fileName = document.getElementById('modal-file-name');
+                const fileSize = document.getElementById('modal-file-size');
+
+                if (file) {
+                    fileName.textContent = file.name;
+                    fileSize.textContent = this.formatFileSize(file.size);
+                    fileInfo.style.display = 'block';
+                } else {
+                    fileInfo.style.display = 'none';
+                }
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
 
             setupMobileNavigation() {
@@ -2186,7 +2576,7 @@
                 }
 
                 const ordersHTML = ordersToDisplay.map(order => `
-                    <tr>
+                    <tr class="order-row" onclick="viewOrder(${order.id})" title="Click to view order details">
                         <td>#${order.order_number}</td>
                         <td>${order.customer_first_name} ${order.customer_last_name}</td>
                         <td>${order.customer_phone}</td>
@@ -2194,19 +2584,19 @@
                         <td>
                             <span class="status-badge status-${order.status} clickable-status" 
                                   data-status="${order.status}"
-                                  onclick="showStatusDropdown(${order.id}, '${order.status}')" 
+                                  onclick="event.stopPropagation(); showStatusDropdown(${order.id}, '${order.status}')" 
                                   title="Click to change status">
                                 ${this.formatStatusText(order.status)}
                             </span>
                         </td>
                         <td>
-                            <span class="date-chip clickable-date" onclick="showDateDropdown(${order.id}, '${order.pickup_date || ''}', '${order.pickup_time || ''}')" title="Click to change pickup date and time">
+                            <span class="date-chip clickable-date" onclick="event.stopPropagation(); showDateDropdown(${order.id}, '${order.pickup_date || ''}', '${order.pickup_time || ''}')" title="Click to change pickup date and time">
                                 📅 ${this.formatPickupDateTime(order.pickup_date, order.pickup_time)}
                             </span>
                         </td>
                         <td>
-                            <button class="btn btn-secondary" onclick="editOrder(${order.id})" title="Edit">✏️</button>
-                            <button class="btn btn-danger-mauve" onclick="deleteOrder(${order.id})" title="Delete">🗑️</button>
+                            <button class="btn btn-secondary" onclick="event.stopPropagation(); editOrder(${order.id})" title="Edit">✏️</button>
+                            <button class="btn btn-danger-mauve" onclick="event.stopPropagation(); deleteOrder(${order.id})" title="Delete">🗑️</button>
                         </td>
                     </tr>
                 `).join('');
@@ -2331,7 +2721,7 @@
                 }
 
                 const ordersHTML = filtered.map(order => `
-                    <tr>
+                    <tr class="order-row" onclick="viewOrder(${order.id})" title="Click to view order details">
                         <td>#${order.order_number}</td>
                         <td>${order.customer_first_name} ${order.customer_last_name}</td>
                         <td>${order.customer_phone}</td>
@@ -2339,8 +2729,8 @@
                         <td><span class="status-badge status-${order.status}">${order.status.replace('_', ' ')}</span></td>
                         <td>${order.pickup_date || 'TBD'}</td>
                         <td>
-                            <button class="btn btn-secondary" onclick="editOrder(${order.id})" title="Edit">✏️</button>
-                            <button class="btn btn-danger-mauve" onclick="deleteOrder(${order.id})" title="Delete">🗑️</button>
+                            <button class="btn btn-secondary" onclick="event.stopPropagation(); editOrder(${order.id})" title="Edit">✏️</button>
+                            <button class="btn btn-danger-mauve" onclick="event.stopPropagation(); deleteOrder(${order.id})" title="Delete">🗑️</button>
                         </td>
                     </tr>
                 `).join('');
@@ -2591,22 +2981,48 @@
                 
                 // Parse flatpickr datetime value
                 const datetimeValue = document.getElementById('pickup-datetime').value;
-                let pickupDate = '';
-                let pickupTime = '';
+                let pickupDatetime = '';
                 if (datetimeValue) {
                     const dateTime = new Date(datetimeValue);
-                    pickupDate = dateTime.toISOString().split('T')[0]; // YYYY-MM-DD format
-                    pickupTime = dateTime.toTimeString().split(' ')[0].substring(0, 5); // HH:MM format
+                    const date = dateTime.toISOString().split('T')[0]; // YYYY-MM-DD format
+                    const time = dateTime.toTimeString().split(' ')[0].substring(0, 5); // HH:MM format
+                    pickupDatetime = `${date} ${time}`;
                 }
                 
+                // Handle file upload if present
+                let fileInfo = null;
+                const fileInput = document.getElementById('modal-file-input');
+                if (fileInput && fileInput.files[0]) {
+                    console.log('📁 Uploading file:', fileInput.files[0].name);
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    
+                    const uploadResponse = await fetch('/api/upload/admin', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('admin_token')}`
+                        },
+                        body: formData
+                    });
+                    
+                    if (uploadResponse.ok) {
+                        const uploadData = await uploadResponse.json();
+                        fileInfo = uploadData.file;
+                        console.log('✅ File uploaded successfully:', fileInfo);
+                    } else {
+                        const errorText = await uploadResponse.text();
+                        console.error('❌ File upload failed:', uploadResponse.status, errorText);
+                        throw new Error('File upload failed');
+                    }
+                }
+
                 const orderData = {
                     customer_first_name: document.getElementById('customer-first-name').value,
                     customer_last_name: document.getElementById('customer-last-name').value,
                     customer_phone: document.getElementById('customer-phone').value,
                     customer_email: document.getElementById('customer-email').value,
                     customer_address: document.getElementById('customer-address').value,
-                    pickup_date: pickupDate,
-                    pickup_time: pickupTime,
+                    pickup_datetime: pickupDatetime,
                     status: document.getElementById('status').value,
                     copies: parseInt(document.getElementById('copies').value),
                     order_description: document.getElementById('order-description').value,
@@ -2614,10 +3030,21 @@
                     notes: document.getElementById('notes').value
                 };
 
+                // Add file information if uploaded
+                if (fileInfo) {
+                    orderData.file_path = fileInfo.path;
+                    orderData.file_name = fileInfo.originalName;
+                    orderData.file_size = fileInfo.size;
+                }
+
+                console.log('📋 Order data being sent:', orderData);
+
                 try {
                     const token = localStorage.getItem('admin_token');
                     const url = isEdit ? `/api/orders/${orderId}` : '/api/orders';
                     const method = isEdit ? 'PUT' : 'POST';
+                    
+                    console.log(`🚀 Sending ${method} request to:`, url);
                     
                     const response = await fetch(url, {
                         method: method,
@@ -2628,14 +3055,18 @@
                         body: JSON.stringify(orderData)
                     });
 
-                    if (response.ok) {
-                        this.showAlert(isEdit ? 'Order updated successfully!' : 'Order created successfully!', 'success');
-                        this.closeOrderModal();
-                        this.loadOrders();
-                    } else {
-                        const errorData = await response.json();
-                        this.showAlert(errorData.message || 'Failed to save order', 'error');
+                    console.log('📡 Response status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('❌ Order creation failed:', response.status, errorText);
+                        throw new Error(`Order creation failed: ${response.status} ${errorText}`);
                     }
+
+                    console.log('✅ Order created successfully!');
+                    this.showAlert(isEdit ? 'Order updated successfully!' : 'Order created successfully!', 'success');
+                    this.closeOrderModal();
+                    this.loadOrders();
                 } catch (error) {
                     console.error('Failed to save order:', error);
                     this.showAlert('Failed to save order', 'error');
@@ -2644,6 +3075,11 @@
 
             closeOrderModal() {
                 document.getElementById('order-modal').style.display = 'none';
+                // Clear file upload
+                const fileInput = document.getElementById('modal-file-input');
+                const fileInfo = document.getElementById('modal-file-info');
+                if (fileInput) fileInput.value = '';
+                if (fileInfo) fileInfo.style.display = 'none';
             }
 
             // Advanced Filtering Methods
@@ -3833,6 +4269,435 @@
 
         function closeOrderModal() {
             document.getElementById('order-modal').style.display = 'none';
+            // Clear file upload
+            const fileInput = document.getElementById('modal-file-input');
+            const fileInfo = document.getElementById('modal-file-info');
+            if (fileInput) fileInput.value = '';
+            if (fileInfo) fileInfo.style.display = 'none';
+        }
+
+        function viewOrder(orderId) {
+            const order = adminPanel.orders.find(o => o.id === orderId);
+            if (!order) {
+                console.error('Order not found:', orderId);
+                return;
+            }
+
+            // Set up order navigation
+            setupOrderNavigation(orderId);
+
+            // Update modal title
+            document.getElementById('view-modal-title').textContent = `Order Details - #${order.order_number}`;
+
+            // Populate order details
+            document.getElementById('view-customer-name').textContent = `${order.customer_first_name} ${order.customer_last_name}`;
+            document.getElementById('view-customer-phone').textContent = order.customer_phone;
+            document.getElementById('view-customer-email').textContent = order.customer_email;
+            document.getElementById('view-customer-address').textContent = order.customer_address;
+            document.getElementById('view-order-number').textContent = order.order_number;
+            document.getElementById('view-status').innerHTML = `<span class="status-badge status-${order.status}">${adminPanel.formatStatusText(order.status)}</span>`;
+            document.getElementById('view-copies').textContent = order.copies || 1;
+            document.getElementById('view-pickup-date').textContent = adminPanel.formatPickupDateTime(order.pickup_date, order.pickup_time);
+            
+            // Print specifications
+            document.getElementById('view-paper-size').textContent = order.paper_size || 'Not specified';
+            document.getElementById('view-paper-type').textContent = order.paper_type || 'Not specified';
+            document.getElementById('view-color-mode').textContent = order.color_mode || 'Not specified';
+            document.getElementById('view-double-sided').textContent = order.double_sided ? 'Yes' : 'No';
+            document.getElementById('view-print-ready').textContent = order.print_ready ? 'Yes' : 'No';
+            document.getElementById('view-binding').textContent = order.binding_type || 'None';
+            document.getElementById('view-finishing').textContent = order.finishing_options || 'None';
+            document.getElementById('view-rush-order').textContent = order.rush_order ? 'Yes' : 'No';
+            
+            // Additional information
+            document.getElementById('view-description').textContent = order.order_description || 'None';
+            document.getElementById('view-special-instructions').textContent = order.special_instructions || 'None';
+            document.getElementById('view-notes').textContent = order.notes || 'None';
+
+            // Load file preview
+            loadFilePreview(order);
+
+            // Show modal
+            document.getElementById('view-order-modal').style.display = 'block';
+        }
+        
+        function setupOrderNavigation(currentOrderId) {
+            // Get the same filtered/sorted orders that the table is using
+            // This matches the logic in displayOrders()
+            filteredOrders = (adminPanel.currentSort.column || Object.keys(adminPanel.activeFilters).length > 0) 
+                ? adminPanel.filteredOrders 
+                : adminPanel.orders;
+            
+            // Find current order index
+            currentOrderIndex = filteredOrders.findIndex(order => order.id === currentOrderId);
+            
+            // Show/hide navigation based on number of orders
+            const navigation = document.getElementById('order-navigation');
+            if (filteredOrders.length > 1) {
+                navigation.style.display = 'flex';
+                updateOrderNavigation();
+                
+                // Set up event listeners
+                document.getElementById('prev-order-btn').onclick = () => navigateToOrder('prev');
+                document.getElementById('next-order-btn').onclick = () => navigateToOrder('next');
+            } else {
+                navigation.style.display = 'none';
+            }
+        }
+        
+        function updateOrderNavigation() {
+            const position = document.getElementById('order-position');
+            const prevBtn = document.getElementById('prev-order-btn');
+            const nextBtn = document.getElementById('next-order-btn');
+            
+            // Update position text
+            position.textContent = `${currentOrderIndex + 1} of ${filteredOrders.length}`;
+            
+            // Update button states
+            prevBtn.disabled = currentOrderIndex === 0;
+            nextBtn.disabled = currentOrderIndex === filteredOrders.length - 1;
+        }
+        
+        function navigateToOrder(direction) {
+            if (direction === 'prev' && currentOrderIndex > 0) {
+                currentOrderIndex--;
+            } else if (direction === 'next' && currentOrderIndex < filteredOrders.length - 1) {
+                currentOrderIndex++;
+            } else {
+                return; // No navigation needed
+            }
+            
+            // Load the new order
+            const newOrder = filteredOrders[currentOrderIndex];
+            loadOrderInModal(newOrder);
+            updateOrderNavigation();
+        }
+        
+        function loadOrderInModal(order) {
+            // Update modal title
+            document.getElementById('view-modal-title').textContent = `Order Details - #${order.order_number}`;
+            
+            // Populate order details
+            document.getElementById('view-customer-name').textContent = `${order.customer_first_name} ${order.customer_last_name}`;
+            document.getElementById('view-customer-phone').textContent = order.customer_phone;
+            document.getElementById('view-customer-email').textContent = order.customer_email;
+            document.getElementById('view-customer-address').textContent = order.customer_address;
+            document.getElementById('view-order-number').textContent = order.order_number;
+            document.getElementById('view-status').innerHTML = `<span class="status-badge status-${order.status}">${adminPanel.formatStatusText(order.status)}</span>`;
+            document.getElementById('view-copies').textContent = order.copies || 1;
+            document.getElementById('view-pickup-date').textContent = adminPanel.formatPickupDateTime(order.pickup_date, order.pickup_time);
+            
+            // Print specifications
+            document.getElementById('view-paper-size').textContent = order.paper_size || 'Not specified';
+            document.getElementById('view-paper-type').textContent = order.paper_type || 'Not specified';
+            document.getElementById('view-color-mode').textContent = order.color_mode || 'Not specified';
+            document.getElementById('view-double-sided').textContent = order.double_sided ? 'Yes' : 'No';
+            document.getElementById('view-print-ready').textContent = order.print_ready ? 'Yes' : 'No';
+            document.getElementById('view-binding').textContent = order.binding_type || 'None';
+            document.getElementById('view-finishing').textContent = order.finishing_options || 'None';
+            document.getElementById('view-rush-order').textContent = order.rush_order ? 'Yes' : 'No';
+            
+            // Additional information
+            document.getElementById('view-description').textContent = order.order_description || 'None';
+            document.getElementById('view-special-instructions').textContent = order.special_instructions || 'None';
+            document.getElementById('view-notes').textContent = order.notes || 'None';
+            
+            // Load file preview
+            loadFilePreview(order);
+        }
+
+        function closeViewOrderModal() {
+            document.getElementById('view-order-modal').style.display = 'none';
+            // Clear file preview
+            const previewContainer = document.getElementById('file-preview');
+            previewContainer.innerHTML = `
+                <div class="preview-placeholder">
+                    <div class="preview-icon">📄</div>
+                    <p>File preview will appear here</p>
+                </div>
+            `;
+            // Reset container styling
+            previewContainer.style.display = 'flex';
+            previewContainer.style.textAlign = 'initial';
+            document.getElementById('download-file-btn').style.display = 'none';
+            document.getElementById('pdf-controls').style.display = 'none';
+            
+            // Reset PDF state
+            currentPDF = null;
+            currentPage = 1;
+            currentScale = 1;
+            isAutoFit = true;
+            
+            // Highlight the current order row and navigate to its page if needed
+            if (filteredOrders.length > 0 && currentOrderIndex >= 0) {
+                const currentOrder = filteredOrders[currentOrderIndex];
+                highlightOrderRow(currentOrder.id);
+            }
+            
+            // Reset navigation state
+            filteredOrders = [];
+            currentOrderIndex = 0;
+        }
+        
+        function highlightOrderRow(orderId) {
+            // Find the order row in the table
+            const orderRow = document.querySelector(`tr[data-order-id="${orderId}"]`);
+            if (orderRow) {
+                // Remove any existing highlights
+                document.querySelectorAll('.order-row').forEach(row => {
+                    row.classList.remove('highlighted');
+                });
+                
+                // Highlight the current row
+                orderRow.classList.add('highlighted');
+                
+                // Scroll the row into view
+                orderRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        async function loadFilePreview(order) {
+            const previewContainer = document.getElementById('file-preview');
+            const downloadBtn = document.getElementById('download-file-btn');
+            const pdfControls = document.getElementById('pdf-controls');
+            
+            // Hide PDF controls by default (will be shown if it's a PDF)
+            pdfControls.style.display = 'none';
+            
+            if (!order.file_path) {
+                previewContainer.innerHTML = `
+                    <div class="preview-placeholder">
+                        <div class="preview-icon">📄</div>
+                        <p>No file uploaded</p>
+                    </div>
+                `;
+                downloadBtn.style.display = 'none';
+                return;
+            }
+
+            // Show loading state
+            previewContainer.innerHTML = `
+                <div class="preview-placeholder">
+                    <div class="preview-icon">⏳</div>
+                    <p>Loading preview...</p>
+                </div>
+            `;
+
+            try {
+                // Use the filename directly (now stored as relative path)
+                const fileName = order.file_path;
+                const fileUrl = `/uploads/${fileName}`;
+                const fileExtension = fileName.split('.').pop().toLowerCase();
+
+                // Set up download button
+                downloadBtn.style.display = 'inline-block';
+                downloadBtn.onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = fileUrl;
+                    link.download = fileName;
+                    link.click();
+                };
+
+                if (fileExtension === 'pdf') {
+                    await loadPDFPreview(fileUrl, previewContainer);
+                } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension)) {
+                    loadImagePreview(fileUrl, previewContainer);
+                } else {
+                    previewContainer.innerHTML = `
+                        <div class="preview-placeholder">
+                            <div class="preview-icon">📄</div>
+                            <p>Preview not available for ${fileExtension.toUpperCase()} files</p>
+                            <p>File: ${fileName}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading file preview:', error);
+                previewContainer.innerHTML = `
+                    <div class="preview-placeholder">
+                        <div class="preview-icon">❌</div>
+                        <p>Error loading preview</p>
+                        <p>File: ${fileName || order.file_path}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Global PDF state
+        let currentPDF = null;
+        let currentPage = 1;
+        let currentScale = 1;
+        let isAutoFit = true; // Track if we're in auto-fit mode
+        
+        // Global order navigation state
+        let filteredOrders = [];
+        let currentOrderIndex = 0;
+
+        async function loadPDFPreview(fileUrl, container) {
+            try {
+                // Set up PDF.js worker
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                
+                currentPDF = await pdfjsLib.getDocument(fileUrl).promise;
+                currentPage = 1;
+                currentScale = 1;
+                isAutoFit = true;
+                
+                // Calculate initial auto-fit scale
+                const container = document.getElementById('file-preview');
+                const page = await currentPDF.getPage(1);
+                const containerWidth = container.clientWidth - 40;
+                const containerHeight = container.clientHeight - 40;
+                const viewport = page.getViewport({ scale: 1 });
+                const scaleX = containerWidth / viewport.width;
+                const scaleY = containerHeight / viewport.height;
+                const initialScale = Math.min(scaleX, scaleY, 1.5);
+                currentScale = initialScale; // Set the actual auto-fit scale
+                
+                // Show PDF controls
+                const pdfControls = document.getElementById('pdf-controls');
+                pdfControls.style.display = 'block';
+                
+                // Setup PDF controls
+                setupPDFControls();
+                
+                // Render first page
+                await renderPDFPage();
+                
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                container.innerHTML = `
+                    <div class="preview-placeholder">
+                        <div class="preview-icon">❌</div>
+                        <p>Error loading PDF preview</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function renderPDFPage() {
+            if (!currentPDF) return;
+            
+            const container = document.getElementById('file-preview');
+            const page = await currentPDF.getPage(currentPage);
+            
+            // Calculate scale
+            let scale = currentScale;
+            
+            if (isAutoFit) {
+                // Auto-fit scale - fit to width only
+                const containerWidth = container.clientWidth - 40;
+                const viewport = page.getViewport({ scale: 1 });
+                
+                const scaleX = containerWidth / viewport.width;
+                scale = Math.min(scaleX, 1.5); // Fit to width, max 150%
+            }
+            // For manual zoom, use currentScale directly (no auto-fitting)
+            
+            const scaledViewport = page.getViewport({ scale });
+            
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = scaledViewport.height;
+            canvas.width = scaledViewport.width;
+            canvas.className = 'pdf-viewer';
+            
+            const renderContext = {
+                canvasContext: context,
+                viewport: scaledViewport
+            };
+            
+            await page.render(renderContext).promise;
+            
+            container.innerHTML = '';
+            container.appendChild(canvas);
+            
+            // For PDFs, remove flex centering and use margin positioning
+            container.style.display = 'block';
+            container.style.textAlign = 'center';
+            
+            // Update controls
+            updatePDFControls();
+        }
+
+        function setupPDFControls() {
+            // Page navigation
+            document.getElementById('prev-page-btn').onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPDFPage();
+                }
+            };
+            
+            document.getElementById('next-page-btn').onclick = () => {
+                if (currentPage < currentPDF.numPages) {
+                    currentPage++;
+                    renderPDFPage();
+                }
+            };
+            
+            // Zoom controls
+            document.getElementById('zoom-in-btn').onclick = () => {
+                isAutoFit = false; // Exit auto-fit mode
+                currentScale = Math.min(currentScale * 1.2, 5); // Allow up to 500% zoom
+                renderPDFPage();
+            };
+            
+            document.getElementById('zoom-out-btn').onclick = () => {
+                isAutoFit = false; // Exit auto-fit mode
+                currentScale = Math.max(currentScale / 1.2, 0.1); // Allow down to 10% zoom
+                renderPDFPage();
+            };
+            
+            document.getElementById('fit-width-btn').onclick = () => {
+                isAutoFit = true; // Enter auto-fit mode
+                // Don't reset currentScale here - let auto-fit calculate it
+                renderPDFPage();
+            };
+            
+        }
+
+        function updatePDFControls() {
+            // Update page info
+            document.getElementById('page-info').textContent = `Page ${currentPage} of ${currentPDF.numPages}`;
+            
+            // Update zoom level
+            let zoomPercent;
+            if (isAutoFit) {
+                zoomPercent = 'Auto';
+            } else {
+                zoomPercent = Math.round(currentScale * 100);
+            }
+            document.getElementById('zoom-level').textContent = `${zoomPercent}%`;
+            
+            // Update button states
+            document.getElementById('prev-page-btn').disabled = currentPage <= 1;
+            document.getElementById('next-page-btn').disabled = currentPage >= currentPDF.numPages;
+        }
+
+
+        function loadImagePreview(fileUrl, container) {
+            const img = document.createElement('img');
+            img.src = fileUrl;
+            img.className = 'image-viewer';
+            img.onload = () => {
+                container.innerHTML = '';
+                container.appendChild(img);
+                // Reset container styling for images
+                container.style.display = 'flex';
+                container.style.textAlign = 'initial';
+            };
+            img.onerror = () => {
+                container.innerHTML = `
+                    <div class="preview-placeholder">
+                        <div class="preview-icon">❌</div>
+                        <p>Error loading image preview</p>
+                    </div>
+                `;
+                // Reset container styling for error state
+                container.style.display = 'flex';
+                container.style.textAlign = 'initial';
+            };
         }
 
         function editOrder(orderId) {
@@ -4243,17 +5108,40 @@
         // Close modal when clicking outside
         window.onclick = function(event) {
             const orderModal = document.getElementById('order-modal');
+            const viewOrderModal = document.getElementById('view-order-modal');
             const deleteConfirmationModal = document.getElementById('delete-confirmation-modal');
             const deleteOptionModal = document.getElementById('delete-option-modal');
             
             if (event.target === orderModal) {
                 closeOrderModal();
+            } else if (event.target === viewOrderModal) {
+                closeViewOrderModal();
             } else if (event.target === deleteConfirmationModal) {
                 closeDeleteConfirmationModal();
             } else if (event.target === deleteOptionModal) {
                 closeDeleteOptionModal();
             }
         }
+
+        // Close modal when pressing Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const viewOrderModal = document.getElementById('view-order-modal');
+                const orderModal = document.getElementById('order-modal');
+                const deleteConfirmationModal = document.getElementById('delete-confirmation-modal');
+                const deleteOptionModal = document.getElementById('delete-option-modal');
+                
+                if (viewOrderModal.style.display === 'block') {
+                    closeViewOrderModal();
+                } else if (orderModal.style.display === 'block') {
+                    closeOrderModal();
+                } else if (deleteConfirmationModal.style.display === 'block') {
+                    closeDeleteConfirmationModal();
+                } else if (deleteOptionModal.style.display === 'block') {
+                    closeDeleteOptionModal();
+                }
+            }
+        });
 
         // Global functions for inline editing
         function showStatusDropdown(orderId, currentStatus) {
@@ -4881,6 +5769,153 @@
         </div>
     </div>
     
+    <!-- View Order Modal -->
+    <div id="view-order-modal" class="modal" style="display: none;">
+        <div class="modal-content view-modal-content">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <h2 id="view-modal-title">Order Details - #123</h2>
+                    <div id="order-navigation" class="order-navigation" style="display: none;">
+                        <button id="prev-order-btn" class="btn btn-sm btn-secondary" title="Previous Order">‹‹</button>
+                        <span id="order-position" class="order-position">1 of 1</span>
+                        <button id="next-order-btn" class="btn btn-sm btn-secondary" title="Next Order">››</button>
+                    </div>
+                </div>
+                <span class="close" onclick="closeViewOrderModal()">&times;</span>
+            </div>
+            <div class="view-modal-body">
+                <div class="view-modal-left">
+                        <div class="file-preview-container">
+                            <!-- PDF Controls (hidden by default) -->
+                            <div id="pdf-controls" class="pdf-controls" style="display: none;">
+                                <div class="pdf-controls-row">
+                                    <div class="pdf-controls-left">
+                                        <button id="prev-page-btn" class="btn btn-sm btn-secondary" title="Previous Page">‹</button>
+                                        <span id="page-info" class="page-info">Page 1 of 1</span>
+                                        <button id="next-page-btn" class="btn btn-sm btn-secondary" title="Next Page">›</button>
+                                    </div>
+                                    <div class="pdf-controls-right">
+                                        <button id="zoom-out-btn" class="btn btn-sm btn-secondary" title="Zoom Out">-</button>
+                                        <span id="zoom-level" class="zoom-level">100%</span>
+                                        <button id="zoom-in-btn" class="btn btn-sm btn-secondary" title="Zoom In">+</button>
+                                        <button id="fit-width-btn" class="btn btn-sm btn-secondary" title="Fit to Width">Fit Width</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="file-preview" class="file-preview">
+                                <div class="preview-placeholder">
+                                    <div class="preview-icon">📄</div>
+                                    <p>File preview will appear here</p>
+                                </div>
+                            </div>
+                            
+                            <div class="preview-controls">
+                                <button id="download-file-btn" class="btn btn-primary" style="display: none;">
+                                    📥 Download File
+                                </button>
+                            </div>
+                        </div>
+                </div>
+                <div class="view-modal-right">
+                    <div class="order-details">
+                        <div class="detail-section">
+                            <h3>Customer Information</h3>
+                            <div class="detail-row">
+                                <span class="detail-label">Name:</span>
+                                <span id="view-customer-name" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Phone:</span>
+                                <span id="view-customer-phone" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Email:</span>
+                                <span id="view-customer-email" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Address:</span>
+                                <span id="view-customer-address" class="detail-value"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h3>Order Information</h3>
+                            <div class="detail-row">
+                                <span class="detail-label">Order #:</span>
+                                <span id="view-order-number" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Status:</span>
+                                <span id="view-status" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Copies:</span>
+                                <span id="view-copies" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Pickup Date:</span>
+                                <span id="view-pickup-date" class="detail-value"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h3>Print Specifications</h3>
+                            <div class="detail-row">
+                                <span class="detail-label">Paper Size:</span>
+                                <span id="view-paper-size" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Paper Type:</span>
+                                <span id="view-paper-type" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Color Mode:</span>
+                                <span id="view-color-mode" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Double Sided:</span>
+                                <span id="view-double-sided" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Print Ready:</span>
+                                <span id="view-print-ready" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Binding:</span>
+                                <span id="view-binding" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Finishing:</span>
+                                <span id="view-finishing" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Rush Order:</span>
+                                <span id="view-rush-order" class="detail-value"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="detail-section">
+                            <h3>Additional Information</h3>
+                            <div class="detail-row">
+                                <span class="detail-label">Description:</span>
+                                <span id="view-description" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Special Instructions:</span>
+                                <span id="view-special-instructions" class="detail-value"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Notes:</span>
+                                <span id="view-notes" class="detail-value"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Confirmation Modal -->
     <div id="delete-confirmation-modal" class="modal" style="display: none;">
         <div class="modal-content">
@@ -4924,5 +5959,6 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </body>
 </html>
