@@ -1739,6 +1739,8 @@
                 <button class="nav-tab" data-tab="settings">Settings</button>
                 <button class="nav-tab" data-tab="options">Options & Prices</button>
                 <button class="nav-tab" data-tab="export">Export</button>
+                <button class="nav-tab" onclick="openTVDisplay()">TV Display</button>
+                <button class="nav-tab" onclick="openOrderForm()">Order Form</button>
                 <button class="nav-tab" onclick="logout()">Logout</button>
             </div>
             <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
@@ -1747,6 +1749,8 @@
                 <button class="mobile-nav-tab" data-tab="settings" onclick="switchTab('settings')">Settings</button>
                 <button class="mobile-nav-tab" data-tab="options" onclick="switchTab('options')">Options & Prices</button>
                 <button class="mobile-nav-tab" data-tab="export" onclick="switchTab('export')">Export</button>
+                <button class="mobile-nav-tab" onclick="openTVDisplay()">TV Display</button>
+                <button class="mobile-nav-tab" onclick="openOrderForm()">Order Form</button>
                 <button class="mobile-nav-tab" onclick="logout()">Logout</button>
             </div>
         </div>
@@ -2529,11 +2533,15 @@
 
             async loadOrders() {
                 try {
+                    console.log('🔍 DEBUG: loadOrders() called - fetching fresh order data');
                     // Load ALL orders including picked_up and abandoned for admin filtering
                     const response = await fetch('/api/orders?show_picked_up=true');
                     if (response.ok) {
                         this.orders = await response.json();
                         this.filteredOrders = [...this.orders];
+                        
+                        console.log('🔍 DEBUG: Fresh orders loaded:', this.orders.length);
+                        console.log('🔍 DEBUG: Order 6 data after refresh:', this.orders.find(o => o.id === 6));
                         
                         // Apply default "Active" filter on page load
                         this.applyDefaultActiveFilter();
@@ -2993,7 +3001,11 @@
                 let fileInfo = null;
                 const fileInput = document.getElementById('modal-file-input');
                 if (fileInput && fileInput.files[0]) {
+                    console.log('🔍 DEBUG: File upload detected');
                     console.log('📁 Uploading file:', fileInput.files[0].name);
+                    console.log('📁 File size:', fileInput.files[0].size);
+                    console.log('📁 File type:', fileInput.files[0].type);
+                    
                     const formData = new FormData();
                     formData.append('file', fileInput.files[0]);
                     
@@ -3009,11 +3021,14 @@
                         const uploadData = await uploadResponse.json();
                         fileInfo = uploadData.file;
                         console.log('✅ File uploaded successfully:', fileInfo);
+                        console.log('🔍 DEBUG: New file path will be:', fileInfo.path);
                     } else {
                         const errorText = await uploadResponse.text();
                         console.error('❌ File upload failed:', uploadResponse.status, errorText);
                         throw new Error('File upload failed');
                     }
+                } else {
+                    console.log('🔍 DEBUG: No file selected for upload');
                 }
 
                 const orderData = {
@@ -3035,9 +3050,18 @@
                     orderData.file_path = fileInfo.path;
                     orderData.file_name = fileInfo.originalName;
                     orderData.file_size = fileInfo.size;
+                    console.log('🔍 DEBUG: Adding file info to order data:', {
+                        file_path: fileInfo.path,
+                        file_name: fileInfo.originalName,
+                        file_size: fileInfo.size
+                    });
+                } else {
+                    console.log('🔍 DEBUG: No file info to add to order data');
                 }
 
                 console.log('📋 Order data being sent:', orderData);
+                console.log('🔍 DEBUG: Is this an edit?', isEdit);
+                console.log('🔍 DEBUG: Order ID:', orderId);
 
                 try {
                     const token = localStorage.getItem('admin_token');
@@ -3063,7 +3087,9 @@
                         throw new Error(`Order creation failed: ${response.status} ${errorText}`);
                     }
 
-                    console.log('✅ Order created successfully!');
+                    const responseData = await response.json();
+                    console.log('✅ Order saved successfully!');
+                    console.log('🔍 DEBUG: Server response:', responseData);
                     this.showAlert(isEdit ? 'Order updated successfully!' : 'Order created successfully!', 'success');
                     this.closeOrderModal();
                     this.loadOrders();
@@ -4283,6 +4309,9 @@
                 return;
             }
 
+            console.log('🔍 DEBUG: Viewing order:', orderId);
+            console.log('🔍 DEBUG: Order data from adminPanel.orders:', order);
+
             // Set up order navigation
             setupOrderNavigation(orderId);
 
@@ -4461,10 +4490,16 @@
             const downloadBtn = document.getElementById('download-file-btn');
             const pdfControls = document.getElementById('pdf-controls');
             
+            console.log('🔍 DEBUG: Loading file preview for order:', order.id);
+            console.log('🔍 DEBUG: Order file_path:', order.file_path);
+            console.log('🔍 DEBUG: Order file_name:', order.file_name);
+            console.log('🔍 DEBUG: Order file_size:', order.file_size);
+            
             // Hide PDF controls by default (will be shown if it's a PDF)
             pdfControls.style.display = 'none';
             
             if (!order.file_path) {
+                console.log('🔍 DEBUG: No file path found, showing placeholder');
                 previewContainer.innerHTML = `
                     <div class="preview-placeholder">
                         <div class="preview-icon">📄</div>
@@ -4488,6 +4523,12 @@
                 const fileName = order.file_path;
                 const fileUrl = `/uploads/${fileName}`;
                 const fileExtension = fileName.split('.').pop().toLowerCase();
+                
+                console.log('🔍 DEBUG: File details:', {
+                    fileName: fileName,
+                    fileUrl: fileUrl,
+                    fileExtension: fileExtension
+                });
 
                 // Set up download button
                 downloadBtn.style.display = 'inline-block';
@@ -4710,6 +4751,14 @@
 
         function logout() {
             adminPanel.logout();
+        }
+
+        function openTVDisplay() {
+            window.open('/display', '_blank');
+        }
+
+        function openOrderForm() {
+            window.open('/', '_blank');
         }
 
         function saveSettings() {
