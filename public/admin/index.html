@@ -2329,7 +2329,12 @@
                 // Tab navigation
                 document.querySelectorAll('.nav-tab').forEach(tab => {
                     tab.addEventListener('click', (e) => {
-                        this.switchTab(e.target.dataset.tab);
+                        // Only handle tabs that have a data-tab attribute
+                        if (e.target.dataset.tab) {
+                            this.switchTab(e.target.dataset.tab);
+                        }
+                        // For buttons without data-tab (like TV Display, Order Form), 
+                        // they have their own onclick handlers, so we don't need to do anything here
                     });
                 });
 
@@ -2487,6 +2492,12 @@
             }
 
             switchTab(tabName) {
+                // Safety check - only proceed if tabName is valid
+                if (!tabName) {
+                    console.warn('switchTab called with invalid tabName:', tabName);
+                    return;
+                }
+
                 // Update active tab for desktop navigation
                 document.querySelectorAll('.nav-tab').forEach(tab => {
                     tab.classList.remove('active');
@@ -2509,7 +2520,13 @@
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
-                document.getElementById(`${tabName}-tab`).classList.add('active');
+                const targetTab = document.getElementById(`${tabName}-tab`);
+                if (targetTab) {
+                    targetTab.classList.add('active');
+                } else {
+                    console.warn(`Tab content not found for: ${tabName}`);
+                    return;
+                }
 
                 // Load data for specific tabs
                 if (tabName === 'settings') {
