@@ -237,6 +237,10 @@ router.put('/:id', authenticateToken, [
     estimated_price: req.body.estimated_price || 0,
     final_price: req.body.final_price || 0,
     print_ready: req.body.print_ready || 0,
+    // File information (if provided)
+    file_path: req.body.file_path || null,
+    file_name: req.body.file_name || null,
+    file_size: req.body.file_size || null,
     updated_at: new Date().toISOString()
   };
   
